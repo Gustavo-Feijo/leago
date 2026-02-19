@@ -1,0 +1,71 @@
+version: "2"
+linters:
+  enable:
+    - bodyclose
+    - decorder
+    - exhaustive
+    - gocritic
+    - gocyclo
+    - godot
+    - misspell
+    - noctx
+    - prealloc
+    - revive
+  settings:
+    decorder:
+      dec-order:
+        - type
+        - const
+        - var
+        - func
+      ignore-underscore-vars: false
+      disable-init-func-first-check: false
+      disable-dec-num-check: false
+      disable-type-dec-num-check: false
+      disable-const-dec-num-check: false
+      disable-var-dec-num-check: false
+      
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - performance
+        - style
+    
+    gocyclo:
+      min-complexity: 15
+    revive:
+      rules:
+        - name: exported
+          severity: warning
+
+    godoclint:
+      default: basic
+
+    godot:
+      period: true
+      capital: false
+      check-all: false
+
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - gocritic
+          - gocyclo
+        path: _test\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
