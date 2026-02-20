@@ -1,6 +1,7 @@
 package leago
 
 import (
+	"leago/api/lol"
 	"leago/api/riot"
 	"leago/internal"
 	"leago/regions"
@@ -24,6 +25,7 @@ type (
 	// PlatformClient provides access to all platform related APIs.
 	PlatformClient struct {
 		*baseClient
+		Lol *lol.PlatformClient
 	}
 )
 
@@ -45,7 +47,7 @@ func NewRegionClient(region regions.Region, apiKey string, opts ...Option) *Regi
 }
 
 // NewPlatformClient returns a new client with access to the platform specific APIs.
-func NewPlatformClient(region regions.Platform, apiKey string, opts ...Option) *PlatformClient {
+func NewPlatformClient(platform regions.Platform, apiKey string, opts ...Option) *PlatformClient {
 	pc := &PlatformClient{
 		baseClient: &baseClient{
 			client: http.DefaultClient,
@@ -55,6 +57,8 @@ func NewPlatformClient(region regions.Platform, apiKey string, opts ...Option) *
 	for _, opt := range opts {
 		opt(pc.baseClient)
 	}
+
+	pc.Lol = lol.NewPlatformClient(pc.client, platform, apiKey)
 
 	return pc
 }
