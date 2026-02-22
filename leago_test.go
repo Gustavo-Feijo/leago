@@ -3,6 +3,7 @@ package leago_test
 import (
 	"leago"
 	"leago/regions"
+	"log/slog"
 	"net/http"
 	"testing"
 
@@ -14,15 +15,17 @@ func TestNewRegionClient(t *testing.T) {
 		regions.RegionAmericas,
 		"key",
 		leago.WithClient(http.DefaultClient),
+		leago.WithLogger(slog.Default()),
 	)
 	require.NotNil(t, client)
 }
 
 func TestNewPlatformClient(t *testing.T) {
 	client := leago.NewPlatformClient(
-		regions.RegionBR1,
-		"key",
+		regions.PlatformBR1,
+		"ApiKey",
 		leago.WithClient(http.DefaultClient),
+		leago.WithLogger(slog.Default()),
 	)
 	require.NotNil(t, client)
 }

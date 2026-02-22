@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"leago/internal"
-	"net/http"
 	"net/url"
 )
 
@@ -27,5 +26,10 @@ func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (Players
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[PlayersResponse](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("Clash.GetByPUUID"))
+	return internal.AuthRequest[PlayersResponse](
+		ctx,
+		pc.client,
+		uri,
+		internal.WithApiMethod("Clash.GetByPUUID"),
+	)
 }

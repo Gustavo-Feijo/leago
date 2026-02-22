@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"leago/internal"
-	"net/http"
 	"net/url"
 	"strconv"
 )
@@ -52,7 +51,12 @@ func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (Mastery
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[MasteryList](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("ChampionMastery.GetByPUUID"))
+	return internal.AuthRequest[MasteryList](
+		ctx,
+		pc.client,
+		uri,
+		internal.WithApiMethod("ChampionMastery.GetByPUUID"),
+	)
 }
 
 // GetByPUUIDTop returns the top X player champion mastery informations got by their PUUID.
@@ -67,7 +71,12 @@ func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count
 	params := make(map[string]string)
 	params["count"] = strconv.Itoa(count)
 
-	return internal.AuthRequest[MasteryList](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, params, internal.WithMethod("ChampionMastery.GetByPUUIDTop"))
+	return internal.AuthRequest[MasteryList](
+		ctx,
+		pc.client,
+		uri,
+		internal.WithParams(params),
+		internal.WithApiMethod("ChampionMastery.GetByPUUIDTop"))
 }
 
 // GetByPUUIDByChampion returns the player champion mastery informations for a given champion got by their PUUID.
@@ -79,7 +88,12 @@ func (pc *PlatformClient) GetByPUUIDByChampion(ctx context.Context, championID i
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[Mastery](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("ChampionMastery.GetByPUUIDByChampion"))
+	return internal.AuthRequest[Mastery](
+		ctx,
+		pc.client,
+		uri,
+		internal.WithApiMethod("ChampionMastery.GetByPUUIDByChampion"),
+	)
 }
 
 // GetScoreByPUUID returns a player total champion mastery score (Sum of individual champion mastery levels).
@@ -90,5 +104,10 @@ func (pc *PlatformClient) GetScoreByPUUID(ctx context.Context, puuid string) (Ma
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[MasteryScore](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("ChampionMastery.GetScoreByPUUID"))
+	return internal.AuthRequest[MasteryScore](
+		ctx,
+		pc.client,
+		uri,
+		internal.WithApiMethod("ChampionMastery.GetScoreByPUUID"),
+	)
 }

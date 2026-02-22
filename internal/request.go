@@ -13,64 +13,129 @@ const apiTokenHeader = "X-Riot-Token"
 
 type (
 	requestOptions struct {
-		method string
+		apiKey     string
+		apiMethod  string
+		httpMethod string
+		body       any
+		params     map[string]string
 	}
 
 	RequestOption func(*requestOptions)
 )
 
-func WithMethod(method string) RequestOption {
-	return func(o *requestOptions) { o.method = method }
+// withApiKey applies the API Key for the AuthRequest.
+func withApiKey(apiKey string) RequestOption {
+	return func(ro *requestOptions) {
+		ro.apiKey = apiKey
+	}
+}
+
+// WithApiMethod sets the API method used (Logging)
+func WithApiMethod(method string) RequestOption {
+	return func(ro *requestOptions) {
+		ro.apiMethod = method
+	}
+}
+
+// WithBody sets the request body.
+func WithBody(body any) RequestOption {
+	return func(ro *requestOptions) {
+		ro.body = body
+	}
+}
+
+// WithHttpMethod sets the request method (Default to GET)
+func WithHttpMethod(method string) RequestOption {
+	return func(ro *requestOptions) {
+		ro.httpMethod = method
+	}
+}
+
+// WithParams sets the request params.
+func WithParams(params map[string]string) RequestOption {
+	return func(ro *requestOptions) {
+		ro.params = params
+	}
 }
 
 // AuthRequest makes a authenticated request with the provided client and returns the decode value to the expected generic type.
-func AuthRequest[T any](ctx context.Context, client *Client, apiKey, uri, method string, params map[string]string, opts ...RequestOption) (T, error) {
-	var zero T
-	u, err := url.Parse(uri)
-	if err != nil {
-		return zero, err
-	}
-
-	// Add any query param needed, some of the APIs use it for filtering.
-	query := u.Query()
-	for key, val := range params {
-		query.Add(key, val)
-	}
-
-	u.RawQuery = query.Encode()
-
-	req, err := http.NewRequestWithContext(ctx, method, u.String(), http.NoBody)
-	if err != nil {
-		return zero, err
-	}
-
-	req.Header.Set(apiTokenHeader, apiKey)
-
-	return do[T](client, req, opts...)
+func AuthRequest[T any](ctx context.Context, client *Client, uri string, opts ...RequestOption) (T, error) {
+	return Request[T](
+		ctx,
+		client,
+		uri,
+		append(opts, withApiKey(client.ApiKey))...,
+	)
 }
 
-// Request makes a authenticated request with the provided client and returns the decode value to the expected generic type.
-func Request[T any](ctx context.Context, client *Client, uri, method string, opts ...RequestOption) (T, error) {
-	req, err := http.NewRequestWithContext(ctx, method, uri, http.NoBody)
+// Request is the basic request implementation with multiple options.
+func Request[T any](ctx context.Context, client *Client, uri string, opts ...RequestOption) (T, error) {
+	var ro requestOptions
+	for _, o := range opts {
+		o(&ro)
+	}
+
+	req, err := buildRequest(ctx, uri, &ro)
 	if err != nil {
 		var zero T
 		return zero, err
 	}
 
-	return do[T](client, req, opts...)
+	return do[T](client, req, &ro)
+}
+
+// buildRequest mounts a new http request with all passed options.
+func buildRequest(ctx context.Context, uri string, opts *requestOptions) (*http.Request, error) {
+	u, err := url.Parse(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add any query param needed, some of the APIs use it for filtering.
+	query := u.Query()
+	for key, val := range opts.params {
+		query.Add(key, val)
+	}
+
+	u.RawQuery = query.Encode()
+
+	var bodyReader io.Reader = http.NoBody
+	if opts.body != nil {
+		b, err := json.Marshal(opts.body)
+		if err != nil {
+			return nil, err
+		}
+		bodyReader = strings.NewReader(string(b))
+	}
+
+	method := opts.httpMethod
+	if method == "" {
+		method = http.MethodGet
+	}
+
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), bodyReader)
+	if err != nil {
+		return nil, err
+	}
+
+	if opts.body != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+
+	if opts.apiKey != "" {
+		req.Header.Set(apiTokenHeader, opts.apiKey)
+	}
+
+	return req, nil
 }
 
 // do Executes the request itself and handles the status and unmarshal.
-func do[T any](client *Client, req *http.Request, opts ...RequestOption) (T, error) {
+func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, error) {
 	var respData T
 
-	ro := &requestOptions{}
-	for _, o := range opts {
-		o(ro)
-	}
-
 	logger := client.Logger.With(
-		"method", ro.method,
+		"apiMethod", ro.apiMethod,
+		"httpMethod", ro.httpMethod,
 		"uri", req.URL.String(),
 		"route", client.routePrefix,
 	)
@@ -88,7 +153,7 @@ func do[T any](client *Client, req *http.Request, opts ...RequestOption) (T, err
 		return respData, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode < 200 || resp.StatusCode > 300 {
 		logger.Warn("non-OK HTTP status", "status", resp.StatusCode)
 		return respData, &RiotError{
 			StatusCode: resp.StatusCode,
