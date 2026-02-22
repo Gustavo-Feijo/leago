@@ -37,7 +37,7 @@ func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game, puuid 
 	)
 
 	uri := rc.client.GetURL(endpoint)
-	return internal.AuthRequest[ActiveRegion](ctx, rc.client.Http, rc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[ActiveRegion](ctx, rc.client, rc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("Account.GetActiveRegionByPUUID"))
 }
 
 // GetActiveShard returns the user active shard by their puuid and game.
@@ -49,7 +49,7 @@ func (rc *RegionClient) GetActiveShardByPUUID(ctx context.Context, game, puuid s
 	)
 
 	uri := rc.client.GetURL(endpoint)
-	return internal.AuthRequest[ActiveShard](ctx, rc.client.Http, rc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[ActiveShard](ctx, rc.client, rc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("Account.GetActiveShardByPUUID"))
 }
 
 // GetByPUUID returns the user account by their puuid.
@@ -60,7 +60,7 @@ func (rc *RegionClient) GetByPUUID(ctx context.Context, puuid string) (Account, 
 	)
 
 	uri := rc.client.GetURL(endpoint)
-	return internal.AuthRequest[Account](ctx, rc.client.Http, rc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[Account](ctx, rc.client, rc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("Account.GetByPUUID"))
 }
 
 // GetByRiotID returns the user account by their gamename and tagline.
@@ -72,5 +72,5 @@ func (rc *RegionClient) GetByRiotID(ctx context.Context, gameName, tagLine strin
 	)
 
 	uri := rc.client.GetURL(endpoint)
-	return internal.AuthRequest[Account](ctx, rc.client.Http, rc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[Account](ctx, rc.client, rc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("Account.GetByRiotID"))
 }

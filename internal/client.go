@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"log/slog"
 )
 
 const (
@@ -10,13 +11,15 @@ const (
 
 type Client struct {
 	Http        Doer
+	Logger      *slog.Logger
 	routePrefix string
 	ApiKey      string
 }
 
-func NewHttpClient(client Doer, route, apiKey string) *Client {
+func NewHttpClient(client Doer, logger *slog.Logger, route, apiKey string) *Client {
 	c := &Client{
 		Http:        client,
+		Logger:      logger,
 		routePrefix: route,
 		ApiKey:      apiKey,
 	}

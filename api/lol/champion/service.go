@@ -17,5 +17,5 @@ func (pc *PlatformClient) GetRotation(ctx context.Context, puuid string) (Champi
 	endpoint := "/lol/platform/v3/champion-rotations"
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[ChampionRotation](ctx, pc.client.Http, pc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[ChampionRotation](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("Champion.GetRotation"))
 }

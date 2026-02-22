@@ -52,7 +52,7 @@ func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (Mastery
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[MasteryList](ctx, pc.client.Http, pc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[MasteryList](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("ChampionMastery.GetByPUUID"))
 }
 
 // GetByPUUIDTop returns the top X player champion mastery informations got by their PUUID.
@@ -67,7 +67,7 @@ func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count
 	params := make(map[string]string)
 	params["count"] = strconv.Itoa(count)
 
-	return internal.AuthRequest[MasteryList](ctx, pc.client.Http, pc.client.ApiKey, uri, http.MethodGet, params)
+	return internal.AuthRequest[MasteryList](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, params, internal.WithMethod("ChampionMastery.GetByPUUIDTop"))
 }
 
 // GetByPUUIDByChampion returns the player champion mastery informations for a given champion got by their PUUID.
@@ -79,7 +79,7 @@ func (pc *PlatformClient) GetByPUUIDByChampion(ctx context.Context, championID i
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[Mastery](ctx, pc.client.Http, pc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[Mastery](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("ChampionMastery.GetByPUUIDByChampion"))
 }
 
 // GetScoreByPUUID returns a player total champion mastery score (Sum of individual champion mastery levels).
@@ -90,5 +90,5 @@ func (pc *PlatformClient) GetScoreByPUUID(ctx context.Context, puuid string) (Ma
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[MasteryScore](ctx, pc.client.Http, pc.client.ApiKey, uri, http.MethodGet, nil)
+	return internal.AuthRequest[MasteryScore](ctx, pc.client, pc.client.ApiKey, uri, http.MethodGet, nil, internal.WithMethod("ChampionMastery.GetScoreByPUUID"))
 }
