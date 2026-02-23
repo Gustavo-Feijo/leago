@@ -1,4 +1,4 @@
-package championmastery
+package clash
 
 import (
 	"context"
@@ -36,7 +36,7 @@ func TestGetByPUUID(t *testing.T) {
 			wantRiotErr:  true,
 		},
 		{
-			name:         "invalid json",
+			name:         "unmatched json",
 			puuid:        "test-puuid",
 			statusCode:   http.StatusOK,
 			responseBody: `{"puuid":"shouldbearray"}`,
@@ -77,7 +77,7 @@ func TestGetByPUUID(t *testing.T) {
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
-			resp, err := pc.GetByPUUID(context.Background(), "puuid")
+			resp, err := pc.GetByPUUID(context.Background(), tt.puuid)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)

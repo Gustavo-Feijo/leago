@@ -1,4 +1,4 @@
-package championmastery
+package clash
 
 import "leago/internal"
 

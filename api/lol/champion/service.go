@@ -1,4 +1,4 @@
-package championmastery
+package champion
 
 import (
 	"context"
@@ -12,7 +12,7 @@ type ChampionRotation struct {
 }
 
 // GetRotation returns the current free champion rotation.
-func (pc *PlatformClient) GetRotation(ctx context.Context, puuid string) (ChampionRotation, error) {
+func (pc *PlatformClient) GetRotation(ctx context.Context) (ChampionRotation, error) {
 	endpoint := "/lol/platform/v3/champion-rotations"
 
 	uri := pc.client.GetURL(endpoint)
