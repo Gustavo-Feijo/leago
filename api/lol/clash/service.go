@@ -1,4 +1,4 @@
-package championmastery
+package clash
 
 import (
 	"context"
@@ -18,7 +18,7 @@ type (
 	PlayersResponse []Player
 )
 
-// GetByPUUID returns the player champion mastery informations got by their PUUID.
+// GetByPUUID returns the player champion mastery information got by their PUUID.
 func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (PlayersResponse, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/players/by-puuid/%s",

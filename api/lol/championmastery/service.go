@@ -43,7 +43,7 @@ type (
 	MasteryScore int
 )
 
-// GetByPUUID returns the player champion mastery informations got by their PUUID.
+// GetByPUUID returns the player champion mastery information got by their PUUID.
 func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (MasteryList, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/champion-mastery/v4/champion-masteries/by-puuid/%s",
@@ -59,7 +59,7 @@ func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (Mastery
 	)
 }
 
-// GetByPUUIDTop returns the top X player champion mastery informations got by their PUUID.
+// GetByPUUIDTop returns the top X player champion mastery information got by their PUUID.
 func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count int) (MasteryList, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/top",
@@ -79,8 +79,8 @@ func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count
 		internal.WithApiMethod("ChampionMastery.GetByPUUIDTop"))
 }
 
-// GetByPUUIDByChampion returns the player champion mastery informations for a given champion got by their PUUID.
-func (pc *PlatformClient) GetByPUUIDByChampion(ctx context.Context, championID int64, puuid string) (Mastery, error) {
+// GetByPUUIDByChampion returns the player champion mastery information for a given champion got by their PUUID.
+func (pc *PlatformClient) GetByPUUIDByChampion(ctx context.Context, puuid string, championID int64) (Mastery, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/by-champion/%d",
 		url.PathEscape(puuid),

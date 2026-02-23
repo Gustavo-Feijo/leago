@@ -30,7 +30,7 @@ func withApiKey(apiKey string) RequestOption {
 	}
 }
 
-// WithApiMethod sets the API method used (Logging)
+// WithApiMethod sets the API method used (Logging).
 func WithApiMethod(method string) RequestOption {
 	return func(ro *requestOptions) {
 		ro.apiMethod = method
@@ -44,7 +44,7 @@ func WithBody(body any) RequestOption {
 	}
 }
 
-// WithHttpMethod sets the request method (Default to GET)
+// WithHttpMethod sets the request method (Default to GET).
 func WithHttpMethod(method string) RequestOption {
 	return func(ro *requestOptions) {
 		ro.httpMethod = method

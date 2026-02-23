@@ -14,21 +14,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type errorReader struct{}
+type (
+	errorReader struct{}
+
+	PostRequest struct {
+		Name string `json:"name"`
+	}
+
+	Response struct {
+		Name string `json:"name"`
+	}
+)
 
 func (e errorReader) Read(p []byte) (int, error) {
 	return 0, fmt.Errorf("forced read error")
 }
 
-type PostRequest struct {
-	Name string `json:"name"`
-}
-
-type Response struct {
-	Name string `json:"name"`
-}
-
-func newTestClient(doer *mock.MockDoer) *Client {
+func newTestClient(doer *mock.Doer) *Client {
 	return &Client{
 		Http:        doer,
 		Logger:      slog.Default(),
@@ -138,7 +140,7 @@ func TestAuthRequest(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.MockDoer{
+			mockDoer := &mock.Doer{
 				Response: &http.Response{
 					StatusCode: tt.httpStatusCode,
 					Body:       tt.httpBody,
