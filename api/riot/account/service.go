@@ -7,26 +7,6 @@ import (
 	"net/url"
 )
 
-type (
-	Account struct {
-		Puuid    string `json:"puuid"`
-		GameName string `json:"gameName"`
-		TagLine  string `json:"tagLine"`
-	}
-
-	ActiveRegion struct {
-		Puuid       string `json:"puuid"`
-		Game        string `json:"game"`
-		ActiveShard string `json:"activeShard"`
-	}
-
-	ActiveShard struct {
-		Puuid       string `json:"puuid"`
-		Game        string `json:"game"`
-		ActiveShard string `json:"activeShard"`
-	}
-)
-
 // GetActiveRegion returns the user active region by their puuid and game.
 func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game, puuid string) (ActiveRegion, error) {
 	endpoint := fmt.Sprintf(
