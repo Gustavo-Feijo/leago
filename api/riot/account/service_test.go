@@ -206,7 +206,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 		name           string
 		statusCode     int
 		puuid          string
-		game           string
+		game           ActiveRegionGame
 		httpErr        error
 		responseBody   string
 		expectedResult ActiveRegion
@@ -216,7 +216,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 		{
 			name:         "riot error",
 			puuid:        "test-puuid",
-			game:         "lol",
+			game:         ActiveRegionLOL,
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
 			wantErr:      true,
@@ -225,7 +225,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 		{
 			name:         "invalid json",
 			puuid:        "test-puuid",
-			game:         "lol",
+			game:         ActiveRegionLOL,
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
 			wantErr:      true,
@@ -234,7 +234,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 		{
 			name:           "success",
 			puuid:          "test-puuid",
-			game:           "lol",
+			game:           ActiveRegionLOL,
 			statusCode:     http.StatusOK,
 			responseBody:   activeRegionJSON,
 			expectedResult: expectedActiveRegion,
@@ -279,7 +279,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 		name           string
 		statusCode     int
 		puuid          string
-		game           string
+		game           ActiveShardGame
 		httpErr        error
 		responseBody   string
 		expectedResult ActiveShard
@@ -289,7 +289,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 		{
 			name:         "riot error",
 			puuid:        "test-puuid",
-			game:         "lol",
+			game:         ActiveShardLOR,
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
 			wantErr:      true,
@@ -298,7 +298,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 		{
 			name:         "invalid json",
 			puuid:        "test-puuid",
-			game:         "lol",
+			game:         ActiveShardLOR,
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
 			wantErr:      true,
@@ -307,7 +307,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 		{
 			name:           "success",
 			puuid:          "test-puuid",
-			game:           "lol",
+			game:           ActiveShardLOR,
 			statusCode:     http.StatusOK,
 			responseBody:   activeShardJSON,
 			expectedResult: expectedActiveShard,

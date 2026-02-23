@@ -8,10 +8,10 @@ import (
 )
 
 // GetActiveRegion returns the user active region by their puuid and game.
-func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game, puuid string) (ActiveRegion, error) {
+func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game ActiveRegionGame, puuid string) (ActiveRegion, error) {
 	endpoint := fmt.Sprintf(
 		"/riot/account/v1/region/by-game/%s/by-puuid/%s",
-		url.PathEscape(game),
+		game,
 		url.PathEscape(puuid),
 	)
 
@@ -25,10 +25,10 @@ func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game, puuid 
 }
 
 // GetActiveShard returns the user active shard by their puuid and game.
-func (rc *RegionClient) GetActiveShardByPUUID(ctx context.Context, game, puuid string) (ActiveShard, error) {
+func (rc *RegionClient) GetActiveShardByPUUID(ctx context.Context, game ActiveShardGame, puuid string) (ActiveShard, error) {
 	endpoint := fmt.Sprintf(
 		"/riot/account/v1/active-shards/by-game/%s/by-puuid/%s",
-		url.PathEscape(game),
+		game,
 		url.PathEscape(puuid),
 	)
 
