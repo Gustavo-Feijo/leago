@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	exampleMastery = Mastery{
+	expectedMastery = Mastery{
 		Puuid:                        "test-puuid",
 		ChampionPointsUntilNextLevel: 100,
 		ChestGranted:                 true,
@@ -45,7 +45,7 @@ var (
 		MilestoneGrades: []string{"S", "A"},
 	}
 
-	exampleMasteryString = `
+	masteryJSON = `
 	{
 			"puuid": "test-puuid",
 			"championPointsUntilNextLevel": 100,
@@ -74,8 +74,8 @@ var (
 		}
 	`
 
-	exampleMasteryList       = MasteryList{exampleMastery}
-	exampleMasteryListString = fmt.Sprintf("[%s]", exampleMasteryString)
+	expectedMasteries = MasteryList{expectedMastery}
+	masteriesJSON     = fmt.Sprintf("[%s]", masteryJSON)
 )
 
 func TestGetByPUUID(t *testing.T) {
@@ -109,8 +109,8 @@ func TestGetByPUUID(t *testing.T) {
 			name:           "success",
 			puuid:          "test-puuid",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleMasteryListString,
-			expectedResult: exampleMasteryList,
+			responseBody:   masteriesJSON,
+			expectedResult: expectedMasteries,
 			wantErr:        false,
 		},
 	}
@@ -180,8 +180,8 @@ func TestGetByPUUIDTop(t *testing.T) {
 			name:           "success",
 			puuid:          "test-puuid",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleMasteryListString,
-			expectedResult: exampleMasteryList,
+			responseBody:   masteriesJSON,
+			expectedResult: expectedMasteries,
 			wantErr:        false,
 		},
 	}
@@ -261,8 +261,8 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 			puuid:          "test-puuid",
 			championId:     266,
 			statusCode:     http.StatusOK,
-			responseBody:   exampleMasteryString,
-			expectedResult: exampleMastery,
+			responseBody:   masteryJSON,
+			expectedResult: expectedMastery,
 			wantErr:        false,
 		},
 	}

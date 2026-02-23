@@ -16,13 +16,13 @@ import (
 )
 
 var (
-	exampleAccount = Account{
+	expectedAccount = Account{
 		Puuid:    "test-puuid",
 		GameName: "TestPlayer",
 		TagLine:  "EUW",
 	}
 
-	exampleAccountString = `
+	accountJSON = `
 	{
 		"puuid": "test-puuid",
 		"gameName": "TestPlayer",
@@ -30,13 +30,13 @@ var (
 	}
 	`
 
-	exampleActiveRegion = ActiveRegion{
+	expectedActiveRegion = ActiveRegion{
 		Puuid:       "test-puuid",
 		Game:        "lol",
 		ActiveShard: "euw",
 	}
 
-	exampleActiveRegionString = `
+	activeRegionJSON = `
 	{
 		"puuid": "test-puuid",
 		"game": "lol",
@@ -44,13 +44,13 @@ var (
 	}
 	`
 
-	exampleActiveShard = ActiveShard{
+	expectedActiveShard = ActiveShard{
 		Puuid:       "test-puuid",
 		Game:        "lol",
 		ActiveShard: "euw",
 	}
 
-	exampleActiveShardString = `
+	activeShardJSON = `
 	{
 		"puuid": "test-puuid",
 		"game": "lol",
@@ -90,8 +90,8 @@ func TestGetByPUUID(t *testing.T) {
 			name:           "success",
 			puuid:          "test-puuid",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleAccountString,
-			expectedResult: exampleAccount,
+			responseBody:   accountJSON,
+			expectedResult: expectedAccount,
 			wantErr:        false,
 		},
 	}
@@ -163,8 +163,8 @@ func TestGetByRiotID(t *testing.T) {
 			gameName:       "TestPlayer",
 			tagLine:        "EUW",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleAccountString,
-			expectedResult: exampleAccount,
+			responseBody:   accountJSON,
+			expectedResult: expectedAccount,
 			wantErr:        false,
 		},
 	}
@@ -236,8 +236,8 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 			puuid:          "test-puuid",
 			game:           "lol",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleActiveRegionString,
-			expectedResult: exampleActiveRegion,
+			responseBody:   activeRegionJSON,
+			expectedResult: expectedActiveRegion,
 			wantErr:        false,
 		},
 	}
@@ -309,8 +309,8 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 			puuid:          "test-puuid",
 			game:           "lol",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleActiveShardString,
-			expectedResult: exampleActiveShard,
+			responseBody:   activeShardJSON,
+			expectedResult: expectedActiveShard,
 			wantErr:        false,
 		},
 	}

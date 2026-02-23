@@ -16,13 +16,13 @@ import (
 )
 
 var (
-	exampleRotation = Rotation{
+	expectedRotation = Rotation{
 		MaxNewPlayerLevel:            10,
 		FreeChampionIdsForNewPlayers: []int{1, 2, 3},
 		FreeChampionIds:              []int{4, 5, 6},
 	}
 
-	exampleRotationString = `
+	rotationJSON = `
 	{
 		"maxNewPlayerLevel": 10,
 		"freeChampionIdsForNewPlayers": [1, 2, 3],
@@ -58,8 +58,8 @@ func TestGetRotation(t *testing.T) {
 		{
 			name:           "success",
 			statusCode:     http.StatusOK,
-			responseBody:   exampleRotationString,
-			expectedResult: exampleRotation,
+			responseBody:   rotationJSON,
+			expectedResult: expectedRotation,
 			wantErr:        false,
 		},
 	}
