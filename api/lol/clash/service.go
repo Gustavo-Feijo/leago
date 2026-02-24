@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"leago/internal"
+	"leago/options"
 	"net/url"
 )
 
@@ -16,7 +17,7 @@ const (
 )
 
 // GetByPUUID returns the player champion mastery information got by their PUUID.
-func (pc *PlatformClient) GetPlayerByPUUID(ctx context.Context, puuid string) (PlayersResponse, error) {
+func (pc *PlatformClient) GetPlayerByPUUID(ctx context.Context, puuid string, opts ...options.PublicOption) (PlayersResponse, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/players/by-puuid/%s",
 		url.PathEscape(puuid),
@@ -27,12 +28,17 @@ func (pc *PlatformClient) GetPlayerByPUUID(ctx context.Context, puuid string) (P
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod(MethodGetPlayerByPUUID),
+		options.MergeOptions(
+			[]internal.RequestOption{
+				internal.WithApiMethod(MethodGetPlayerByPUUID),
+			},
+			opts,
+		)...,
 	)
 }
 
 // GetTeamByID returns the team got by their ID.
-func (pc *PlatformClient) GetTeamByID(ctx context.Context, teamID string) (Team, error) {
+func (pc *PlatformClient) GetTeamByID(ctx context.Context, teamID string, opts ...options.PublicOption) (Team, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/teams/%s",
 		url.PathEscape(teamID),
@@ -43,12 +49,17 @@ func (pc *PlatformClient) GetTeamByID(ctx context.Context, teamID string) (Team,
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod(MethodGetTeamByID),
+		options.MergeOptions(
+			[]internal.RequestOption{
+				internal.WithApiMethod(MethodGetTeamByID),
+			},
+			opts,
+		)...,
 	)
 }
 
 // GetTournaments returns a list of active and upcoming tournaments.
-func (pc *PlatformClient) GetTournaments(ctx context.Context) (TournamentsResponse, error) {
+func (pc *PlatformClient) GetTournaments(ctx context.Context, opts ...options.PublicOption) (TournamentsResponse, error) {
 	endpoint := "/lol/clash/v1/tournaments"
 
 	uri := pc.client.GetURL(endpoint)
@@ -56,12 +67,17 @@ func (pc *PlatformClient) GetTournaments(ctx context.Context) (TournamentsRespon
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod(MethodGetTournaments),
+		options.MergeOptions(
+			[]internal.RequestOption{
+				internal.WithApiMethod(MethodGetTournaments),
+			},
+			opts,
+		)...,
 	)
 }
 
 // GetTournamentByTeamID returns a tournament got by the teamId.
-func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamID string) (Tournament, error) {
+func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamID string, opts ...options.PublicOption) (Tournament, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/tournaments/by-team/%s",
 		url.PathEscape(teamID),
@@ -72,12 +88,17 @@ func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamID stri
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod(MethodGetTournamentByTeamID),
+		options.MergeOptions(
+			[]internal.RequestOption{
+				internal.WithApiMethod(MethodGetTournamentByTeamID),
+			},
+			opts,
+		)...,
 	)
 }
 
 // GetTournamentByID returns a tournament got by the tournamentId.
-func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentID string) (Tournament, error) {
+func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentID string, opts ...options.PublicOption) (Tournament, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/tournaments/%s",
 		url.PathEscape(tournamentID),
@@ -88,6 +109,11 @@ func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentID st
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod(MethodGetTournamentByID),
+		options.MergeOptions(
+			[]internal.RequestOption{
+				internal.WithApiMethod(MethodGetTournamentByID),
+			},
+			opts,
+		)...,
 	)
 }
