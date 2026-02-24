@@ -11,7 +11,7 @@ type (
 )
 
 // WithApiMethod is the public wrapper to change the API method name used in the a request.
-// Used for logging.
+// Identifier used to logging and, when implemented, rate limiting.
 func WithApiMethod(method string) PublicOption {
 	return PublicOption{
 		apply: internal.WithApiMethod(method),
