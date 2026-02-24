@@ -7,6 +7,13 @@ import (
 	"net/url"
 )
 
+const (
+	MethodGetActiveRegionByPUUID = "Account.GetActiveRegionByPUUID"
+	MethodGetActiveShardByPUUID  = "Account.GetActiveShardByPUUID"
+	MethodGetByPUUID             = "Account.GetByPUUID"
+	MethodGetByRiotID            = "Account.GetByRiotID"
+)
+
 // GetActiveRegion returns the user active region by their puuid and game.
 func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game ActiveRegionGame, puuid string) (ActiveRegion, error) {
 	endpoint := fmt.Sprintf(
@@ -20,7 +27,7 @@ func (rc *RegionClient) GetActiveRegionByPUUID(ctx context.Context, game ActiveR
 		ctx,
 		rc.client,
 		uri,
-		internal.WithApiMethod("Account.GetActiveRegionByPUUID"),
+		internal.WithApiMethod(MethodGetActiveRegionByPUUID),
 	)
 }
 
@@ -37,7 +44,7 @@ func (rc *RegionClient) GetActiveShardByPUUID(ctx context.Context, game ActiveSh
 		ctx,
 		rc.client,
 		uri,
-		internal.WithApiMethod("Account.GetActiveShardByPUUID"),
+		internal.WithApiMethod(MethodGetActiveShardByPUUID),
 	)
 }
 
@@ -53,7 +60,7 @@ func (rc *RegionClient) GetByPUUID(ctx context.Context, puuid string) (Account, 
 		ctx,
 		rc.client,
 		uri,
-		internal.WithApiMethod("Account.GetByPUUID"),
+		internal.WithApiMethod(MethodGetByPUUID),
 	)
 }
 
@@ -70,6 +77,6 @@ func (rc *RegionClient) GetByRiotID(ctx context.Context, gameName, tagLine strin
 		ctx,
 		rc.client,
 		uri,
-		internal.WithApiMethod("Account.GetByRiotID"),
+		internal.WithApiMethod(MethodGetByRiotID),
 	)
 }

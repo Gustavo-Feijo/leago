@@ -8,6 +8,13 @@ import (
 	"strconv"
 )
 
+const (
+	MethodGetByPUUID           = "ChampionMastery.GetByPUUID"
+	MethodGetByPUUIDTop        = "ChampionMastery.GetByPUUIDTop"
+	MethodGetByPUUIDByChampion = "ChampionMastery.GetByPUUIDByChampion"
+	MethodGetScoreByPUUID      = "ChampionMastery.GetScoreByPUUID"
+)
+
 // GetByPUUID returns the player champion mastery information got by their PUUID.
 func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (MasteryList, error) {
 	endpoint := fmt.Sprintf(
@@ -20,7 +27,7 @@ func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string) (Mastery
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("ChampionMastery.GetByPUUID"),
+		internal.WithApiMethod(MethodGetByPUUID),
 	)
 }
 
@@ -41,7 +48,7 @@ func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count
 		pc.client,
 		uri,
 		internal.WithParams(params),
-		internal.WithApiMethod("ChampionMastery.GetByPUUIDTop"))
+		internal.WithApiMethod(MethodGetByPUUIDTop))
 }
 
 // GetByPUUIDByChampion returns the player champion mastery information for a given champion got by their PUUID.
@@ -57,7 +64,7 @@ func (pc *PlatformClient) GetByPUUIDByChampion(ctx context.Context, puuid string
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("ChampionMastery.GetByPUUIDByChampion"),
+		internal.WithApiMethod(MethodGetByPUUIDByChampion),
 	)
 }
 
@@ -73,6 +80,6 @@ func (pc *PlatformClient) GetScoreByPUUID(ctx context.Context, puuid string) (Ma
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("ChampionMastery.GetScoreByPUUID"),
+		internal.WithApiMethod(MethodGetScoreByPUUID),
 	)
 }

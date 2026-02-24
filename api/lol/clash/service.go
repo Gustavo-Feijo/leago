@@ -7,6 +7,14 @@ import (
 	"net/url"
 )
 
+const (
+	MethodGetPlayerByPUUID      = "Clash.GetPlayerByPUUID"
+	MethodGetTeamByID           = "Clash.GetTeamByID"
+	MethodGetTournaments        = "Clash.GetTournaments"
+	MethodGetTournamentByTeamID = "Clash.GetTournamentByTeamID"
+	MethodGetTournamentByID     = "Clash.GetTournamentByID"
+)
+
 // GetByPUUID returns the player champion mastery information got by their PUUID.
 func (pc *PlatformClient) GetPlayerByPUUID(ctx context.Context, puuid string) (PlayersResponse, error) {
 	endpoint := fmt.Sprintf(
@@ -19,15 +27,15 @@ func (pc *PlatformClient) GetPlayerByPUUID(ctx context.Context, puuid string) (P
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("Clash.GetPlayerByPUUID"),
+		internal.WithApiMethod(MethodGetPlayerByPUUID),
 	)
 }
 
 // GetTeamByID returns the team got by their ID.
-func (pc *PlatformClient) GetTeamByID(ctx context.Context, teamId string) (Team, error) {
+func (pc *PlatformClient) GetTeamByID(ctx context.Context, teamID string) (Team, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/teams/%s",
-		url.PathEscape(teamId),
+		url.PathEscape(teamID),
 	)
 
 	uri := pc.client.GetURL(endpoint)
@@ -35,7 +43,7 @@ func (pc *PlatformClient) GetTeamByID(ctx context.Context, teamId string) (Team,
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("Clash.GetTeamByID"),
+		internal.WithApiMethod(MethodGetTeamByID),
 	)
 }
 
@@ -48,15 +56,15 @@ func (pc *PlatformClient) GetTournaments(ctx context.Context) (TournamentsRespon
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("Clash.GetTournaments"),
+		internal.WithApiMethod(MethodGetTournaments),
 	)
 }
 
 // GetTournamentByTeamID returns a tournament got by the teamId.
-func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamId string) (Tournament, error) {
+func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamID string) (Tournament, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/tournaments/by-team/%s",
-		teamId,
+		teamID,
 	)
 
 	uri := pc.client.GetURL(endpoint)
@@ -64,15 +72,15 @@ func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamId stri
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("Clash.GetTournamentByTeamID"),
+		internal.WithApiMethod(MethodGetTournamentByTeamID),
 	)
 }
 
 // GetTournamentByID returns a tournament got by the tournamentId.
-func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentId string) (Tournament, error) {
+func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentID string) (Tournament, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/tournaments/%s",
-		tournamentId,
+		tournamentID,
 	)
 
 	uri := pc.client.GetURL(endpoint)
@@ -80,6 +88,6 @@ func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentId st
 		ctx,
 		pc.client,
 		uri,
-		internal.WithApiMethod("Clash.GetTournamentByID"),
+		internal.WithApiMethod(MethodGetTournamentByID),
 	)
 }
