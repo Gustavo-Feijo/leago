@@ -64,7 +64,7 @@ func (pc *PlatformClient) GetTournaments(ctx context.Context) (TournamentsRespon
 func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamID string) (Tournament, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/tournaments/by-team/%s",
-		teamID,
+		url.PathEscape(teamID),
 	)
 
 	uri := pc.client.GetURL(endpoint)
@@ -80,7 +80,7 @@ func (pc *PlatformClient) GetTournamentByTeamID(ctx context.Context, teamID stri
 func (pc *PlatformClient) GetTournamentByID(ctx context.Context, tournamentID string) (Tournament, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/clash/v1/tournaments/%s",
-		tournamentID,
+		url.PathEscape(tournamentID),
 	)
 
 	uri := pc.client.GetURL(endpoint)
