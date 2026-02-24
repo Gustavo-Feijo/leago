@@ -13,7 +13,7 @@ type Client struct {
 	Http        Doer
 	Logger      *slog.Logger
 	routePrefix string
-	ApiKey      string
+	apiKey      string
 }
 
 func NewHttpClient(client Doer, logger *slog.Logger, route, apiKey string) *Client {
@@ -21,7 +21,7 @@ func NewHttpClient(client Doer, logger *slog.Logger, route, apiKey string) *Clie
 		Http:        client,
 		Logger:      logger,
 		routePrefix: route,
-		ApiKey:      apiKey,
+		apiKey:      apiKey,
 	}
 
 	return c

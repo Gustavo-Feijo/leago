@@ -13,7 +13,7 @@ import (
 func TestNewHTTPClient(t *testing.T) {
 	client := NewHttpClient(http.DefaultClient, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	require.NotNil(t, client)
-	assert.Equal(t, client.ApiKey, "apiKey")
+	assert.Equal(t, client.apiKey, "apiKey")
 }
 
 func TestGetURL(t *testing.T) {

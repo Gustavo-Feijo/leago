@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const apiTokenHeader = "X-Riot-Token"
+const apiTokenHeader = "X-Riot-Token" // #nosec Header name, not credential
 
 type (
 	requestOptions struct {
@@ -64,7 +64,7 @@ func AuthRequest[T any](ctx context.Context, client *Client, uri string, opts ..
 		ctx,
 		client,
 		uri,
-		append(opts, withApiKey(client.ApiKey))...,
+		append(opts, withApiKey(client.apiKey))...,
 	)
 }
 

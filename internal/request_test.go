@@ -35,7 +35,7 @@ func newTestClient(doer *mock.Doer) *Client {
 		Http:        doer,
 		Logger:      slog.Default(),
 		routePrefix: "test",
-		ApiKey:      "apiKey",
+		apiKey:      "apiKey",
 	}
 }
 
