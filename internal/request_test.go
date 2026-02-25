@@ -133,7 +133,7 @@ func TestAuthRequest(t *testing.T) {
 			// Token can also be as param.
 			wantTokenParam: "validKey",
 			reqOpts: []RequestOption{
-				WithParams(map[string]string{apiTokenHeader: "validKey"}),
+				WithParam(apiTokenHeader, "validKey"),
 			},
 		},
 	}

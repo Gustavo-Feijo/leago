@@ -11,53 +11,6 @@ import (
 
 const apiTokenHeader = "X-Riot-Token" // #nosec Header name, not credential
 
-type (
-	requestOptions struct {
-		apiKey     string
-		apiMethod  string
-		httpMethod string
-		body       any
-		params     map[string]string
-	}
-
-	RequestOption func(*requestOptions)
-)
-
-// withApiKey applies the API Key for the AuthRequest.
-func withApiKey(apiKey string) RequestOption {
-	return func(ro *requestOptions) {
-		ro.apiKey = apiKey
-	}
-}
-
-// WithApiMethod sets the API method used (Logging).
-func WithApiMethod(method string) RequestOption {
-	return func(ro *requestOptions) {
-		ro.apiMethod = method
-	}
-}
-
-// WithBody sets the request body.
-func WithBody(body any) RequestOption {
-	return func(ro *requestOptions) {
-		ro.body = body
-	}
-}
-
-// WithHttpMethod sets the request method (Default to GET).
-func WithHttpMethod(method string) RequestOption {
-	return func(ro *requestOptions) {
-		ro.httpMethod = method
-	}
-}
-
-// WithParams sets the request params.
-func WithParams(params map[string]string) RequestOption {
-	return func(ro *requestOptions) {
-		ro.params = params
-	}
-}
-
 // AuthRequest makes a authenticated request with the provided client and returns the decode value to the expected generic type.
 func AuthRequest[T any](ctx context.Context, client *Client, uri string, opts ...RequestOption) (T, error) {
 	return Request[T](
