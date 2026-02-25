@@ -4,6 +4,7 @@ import (
 	"leago/api/lol/champion"
 	"leago/api/lol/championmastery"
 	"leago/api/lol/clash"
+	"leago/api/lol/league"
 	"leago/api/lol/leagueexp"
 	"leago/internal"
 	"leago/regions"
@@ -14,6 +15,7 @@ type PlatformClient struct {
 	Champion        *champion.PlatformClient
 	ChampionMastery *championmastery.PlatformClient
 	Clash           *clash.PlatformClient
+	League          *league.PlatformClient
 	LeagueExp       *leagueexp.PlatformClient
 }
 
@@ -23,6 +25,7 @@ func NewPlatformClient(client internal.Doer, logger *slog.Logger, region regions
 		ChampionMastery: championmastery.NewPlatformClient(baseClient),
 		Champion:        champion.NewPlatformClient(baseClient),
 		Clash:           clash.NewPlatformClient(baseClient),
+		League:          league.NewPlatformClient(baseClient),
 		LeagueExp:       leagueexp.NewPlatformClient(baseClient),
 	}
 	return c
