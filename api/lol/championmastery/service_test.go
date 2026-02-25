@@ -200,7 +200,7 @@ func TestGetByPUUIDTop(t *testing.T) {
 			pc := NewPlatformClient(baseClient)
 
 			defaultCount := 5
-			resp, err := pc.GetByPUUIDTop(context.Background(), tt.puuid, defaultCount)
+			resp, err := pc.GetByPUUIDTop(context.Background(), tt.puuid, []GetByPUUIDTopOption{WithCount(defaultCount)})
 
 			if tt.wantErr {
 				assert.NotNil(t, err)

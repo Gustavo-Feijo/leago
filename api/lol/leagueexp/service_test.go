@@ -167,6 +167,9 @@ func TestGetLeague(t *testing.T) {
 				tt.queue,
 				tt.tier,
 				tt.division,
+				[]GetLeagueOption{
+					WithPage(1),
+				},
 			)
 
 			if tt.wantErr {

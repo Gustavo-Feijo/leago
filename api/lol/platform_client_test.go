@@ -16,4 +16,5 @@ func TestNewPlatformClient(t *testing.T) {
 	require.NotNil(t, client.Champion)
 	require.NotNil(t, client.ChampionMastery)
 	require.NotNil(t, client.Clash)
+	require.NotNil(t, client.LeagueExp)
 }

@@ -6,7 +6,6 @@ import (
 	"leago/internal"
 	"leago/options"
 	"net/url"
-	"strconv"
 )
 
 const (
@@ -39,7 +38,7 @@ func (pc *PlatformClient) GetByPUUID(ctx context.Context, puuid string, opts ...
 }
 
 // GetByPUUIDTop returns the top X player champion mastery information got by their PUUID.
-func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count int, opts ...options.PublicOption) (MasteryList, error) {
+func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, endpointOpts []GetByPUUIDTopOption, opts ...options.PublicOption) (MasteryList, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/top",
 		url.PathEscape(puuid),
@@ -47,20 +46,17 @@ func (pc *PlatformClient) GetByPUUIDTop(ctx context.Context, puuid string, count
 
 	uri := pc.client.GetURL(endpoint)
 
-	params := make(map[string]string)
-	params["count"] = strconv.Itoa(count)
+	// Adds endpoint specific options, like count.
+	defaultOpts := append(
+		[]internal.RequestOption{internal.WithApiMethod(MethodGetByPUUIDTop)},
+		puuidTopOptionsToRequestOptions(endpointOpts)...,
+	)
 
 	return internal.AuthRequest[MasteryList](
 		ctx,
 		pc.client,
 		uri,
-		options.MergeOptions(
-			[]internal.RequestOption{
-				internal.WithApiMethod(MethodGetByPUUIDTop),
-				internal.WithParams(params),
-			},
-			opts,
-		)...,
+		options.MergeOptions(defaultOpts, opts)...,
 	)
 }
 
