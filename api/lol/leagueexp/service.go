@@ -13,7 +13,13 @@ const (
 
 // GetLeague returns all league entries based on the params.
 // More consistent than league, which has some weird separations (Separate APIs for upper divisions).
-func (pc *PlatformClient) GetLeague(ctx context.Context, queue Queue, tier Tier, division Division, endpointOpts []GetLeagueOption, opts ...options.PublicOption) (LeagueResponse, error) {
+func (pc *PlatformClient) GetLeague(
+	ctx context.Context,
+	queue Queue, tier Tier,
+	division Division,
+	endpointOpts []GetLeagueOption,
+	opts ...options.PublicOption,
+) (LeagueResponse, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/league-exp/v4/entries/%s/%s/%s",
 		queue,
