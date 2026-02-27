@@ -1,6 +1,7 @@
 package lol
 
 import (
+	"leago/api/lol/challenges"
 	"leago/api/lol/champion"
 	"leago/api/lol/championmastery"
 	"leago/api/lol/clash"
@@ -12,6 +13,7 @@ import (
 )
 
 type PlatformClient struct {
+	Challenges      *challenges.PlatformClient
 	Champion        *champion.PlatformClient
 	ChampionMastery *championmastery.PlatformClient
 	Clash           *clash.PlatformClient
@@ -22,6 +24,7 @@ type PlatformClient struct {
 func NewPlatformClient(client internal.Doer, logger *slog.Logger, region regions.Platform, apiKey string) *PlatformClient {
 	baseClient := internal.NewHttpClient(client, logger, string(region), apiKey)
 	c := &PlatformClient{
+		Challenges:      challenges.NewPlatformClient(baseClient),
 		ChampionMastery: championmastery.NewPlatformClient(baseClient),
 		Champion:        champion.NewPlatformClient(baseClient),
 		Clash:           clash.NewPlatformClient(baseClient),
