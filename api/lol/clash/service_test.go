@@ -3,13 +3,11 @@ package clash
 import (
 	"context"
 	"fmt"
-	"io"
 	"leago/internal"
 	"leago/internal/mock"
 	"leago/regions"
 	"log/slog"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -99,13 +97,7 @@ func TestGetPlayerByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
@@ -197,13 +189,7 @@ func TestGetTeamByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 			resp, err := pc.GetTeamByID(context.Background(), tt.teamId)
@@ -261,13 +247,7 @@ func TestGetTournaments(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 			resp, err := pc.GetTournaments(context.Background())
@@ -330,13 +310,7 @@ func TestGetTournamentByTeamID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 			resp, err := pc.GetTournamentByTeamID(context.Background(), tt.teamId)
@@ -398,13 +372,7 @@ func TestGetTournamentByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 			resp, err := pc.GetTournamentByID(context.Background(), tt.tournamentId)

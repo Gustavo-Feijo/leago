@@ -2,13 +2,11 @@ package league
 
 import (
 	"context"
-	"io"
 	"leago/internal"
 	"leago/internal/mock"
 	"leago/regions"
 	"log/slog"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -89,13 +87,7 @@ func TestGetChallengerLeague(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(
 				mockDoer,
 				slog.Default(),
@@ -187,13 +179,7 @@ func TestGetGrandmasterLeague(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(
 				mockDoer,
 				slog.Default(),
@@ -284,13 +270,7 @@ func TestGetMasterLeague(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(
 				mockDoer,
 				slog.Default(),
@@ -446,13 +426,7 @@ func TestGetLeagueEntries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(
 				mockDoer,
 				slog.Default(),
@@ -555,13 +529,7 @@ func TestGetLeagueEntriesByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(
 				mockDoer,
 				slog.Default(),
@@ -716,13 +684,7 @@ func TestGetLeagueByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 			baseClient := internal.NewHttpClient(
 				mockDoer,
 				slog.Default(),

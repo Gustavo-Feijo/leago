@@ -3,14 +3,12 @@ package championmastery
 import (
 	"context"
 	"fmt"
-	"io"
 	"leago/internal"
 	"leago/internal/mock"
 	"leago/regions"
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -117,13 +115,7 @@ func TestGetByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
@@ -188,13 +180,7 @@ func TestGetByPUUIDTop(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
@@ -269,13 +255,7 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
@@ -339,13 +319,7 @@ func TestGetScoreByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)

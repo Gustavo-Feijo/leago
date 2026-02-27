@@ -2,13 +2,11 @@ package account
 
 import (
 	"context"
-	"io"
 	"leago/internal"
 	"leago/internal/mock"
 	"leago/regions"
 	"log/slog"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -98,13 +96,7 @@ func TestGetByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
@@ -171,13 +163,7 @@ func TestGetByRiotID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
@@ -244,13 +230,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
@@ -317,13 +297,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)

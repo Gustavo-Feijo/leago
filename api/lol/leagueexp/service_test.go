@@ -2,13 +2,11 @@ package leagueexp
 
 import (
 	"context"
-	"io"
 	"leago/internal"
 	"leago/internal/mock"
 	"leago/regions"
 	"log/slog"
 	"net/http"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -145,13 +143,7 @@ func TestGetLeague(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := &mock.Doer{
-				Response: &http.Response{
-					StatusCode: tt.statusCode,
-					Body:       io.NopCloser(strings.NewReader(tt.responseBody)),
-				},
-				Err: tt.httpErr,
-			}
+			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
 			baseClient := internal.NewHttpClient(
 				mockDoer,
