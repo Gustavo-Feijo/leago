@@ -173,10 +173,11 @@ func TestGetStatus(t *testing.T) {
 			require.NotNil(t, resp)
 
 			// Avoiding direct comparison of the returned due to timezones handling.
-			var expected ServiceStatus
-			_ = json.Unmarshal([]byte(statusJson), &expected)
+			// Marshal first so both are plain jsons.
+			expectedJson, _ := json.Marshal(tt.expectedResult)
+			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expected, resp)
+			assert.Equal(t, expectedJson, jsonResp)
 		})
 	}
 }

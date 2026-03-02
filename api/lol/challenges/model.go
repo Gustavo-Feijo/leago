@@ -1,34 +1,5 @@
 package challenges
 
-const (
-	StateDisabled State = "DISABLED"
-	StateHidden   State = "HIDDEN"
-	StateEnabled  State = "ENABLED"
-	StateArchived State = "ARCHIVED"
-
-	TrackingLifetime Tracking = "LIFETIME"
-	TrackingSeason   Tracking = "SEASON"
-
-	LevelNone                      Level = "NONE"
-	LevelIron                      Level = "IRON"
-	LevelBronze                    Level = "BRONZE"
-	LevelSilver                    Level = "SILVER"
-	LevelGold                      Level = "GOLD"
-	LevelPlatinum                  Level = "PLATINUM"
-	LevelDiamond                   Level = "DIAMOND"
-	LevelMaster                    Level = "MASTER"
-	LevelGrandmaster               Level = "GRANDMASTER"
-	LevelChallenger                Level = "CHALLENGER"
-	LevelHighestNotLeaderboardOnly Level = "HIGHEST_NOT_LEADERBOARD_ONLY"
-	LevelHighest                   Level = "HIGHEST"
-	LevelLowest                    Level = "LOWEST"
-
-	// Leaderboards endpoint only accept those.
-	TopLevelMaster      TopLevel = "MASTER"
-	TopLevelGrandmaster TopLevel = "GRANDMASTER"
-	TopLevelChallenger  TopLevel = "CHALLENGER"
-)
-
 type (
 	State    string
 	Tracking string
@@ -86,4 +57,33 @@ type (
 		Max        int64   `json:"max"`
 		Percentile float64 `json:"percentile"`
 	}
+)
+
+const (
+	StateDisabled State = "DISABLED"
+	StateHidden   State = "HIDDEN"
+	StateEnabled  State = "ENABLED"
+	StateArchived State = "ARCHIVED"
+
+	TrackingLifetime Tracking = "LIFETIME"
+	TrackingSeason   Tracking = "SEASON"
+
+	LevelNone                      Level = "NONE"
+	LevelIron                      Level = "IRON"
+	LevelBronze                    Level = "BRONZE"
+	LevelSilver                    Level = "SILVER"
+	LevelGold                      Level = "GOLD"
+	LevelPlatinum                  Level = "PLATINUM"
+	LevelDiamond                   Level = "DIAMOND"
+	LevelMaster                    Level = "MASTER"
+	LevelGrandmaster               Level = "GRANDMASTER"
+	LevelChallenger                Level = "CHALLENGER"
+	LevelHighestNotLeaderboardOnly Level = "HIGHEST_NOT_LEADERBOARD_ONLY"
+	LevelHighest                   Level = "HIGHEST"
+	LevelLowest                    Level = "LOWEST"
+
+	// Leaderboards endpoint only accept those.
+	TopLevelMaster      TopLevel = "MASTER"
+	TopLevelGrandmaster TopLevel = "GRANDMASTER"
+	TopLevelChallenger  TopLevel = "CHALLENGER"
 )
