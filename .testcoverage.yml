@@ -1,0 +1,10 @@
+profile: coverage.out
+
+threshold:
+  total: 80
+
+exclude:
+  paths:
+    - _test.go$
+    - ^examples/
+    - /mock/
