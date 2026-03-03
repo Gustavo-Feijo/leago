@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewPlatformClient(t *testing.T) {
+func TestNewRegionClient(t *testing.T) {
 	client := NewRegionClient(http.DefaultClient, slog.Default(), regions.RegionAmericas, "apiKey")
 	require.NotNil(t, client)
 
