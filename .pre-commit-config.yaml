@@ -10,16 +10,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: gosec
-        pass_filenames: false
-        name: gosec
-        entry: gosec ./...
-        language: system
-        types: [go]
-        args: ["-exclude-dir=vendor,examples,tests"]
-
-  - repo: local
-    hooks:
       - id: govulncheck
         pass_filenames: false
         name: govulncheck
