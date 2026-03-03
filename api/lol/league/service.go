@@ -3,8 +3,9 @@ package league
 import (
 	"context"
 	"fmt"
-	"leago/internal"
-	"leago/options"
+
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/options"
 )
 
 const (

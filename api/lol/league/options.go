@@ -1,8 +1,9 @@
 package league
 
 import (
-	"leago/internal"
 	"strconv"
+
+	"github.com/Gustavo-Feijo/leago/internal"
 )
 
 type GetLeagueOption internal.RequestOption

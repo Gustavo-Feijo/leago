@@ -1,6 +1,6 @@
 package ranked
 
-import "leago/internal"
+import "github.com/Gustavo-Feijo/leago/internal"
 
 type RegionClient struct {
 	client *internal.Client

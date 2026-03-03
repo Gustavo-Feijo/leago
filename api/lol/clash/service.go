@@ -3,9 +3,10 @@ package clash
 import (
 	"context"
 	"fmt"
-	"leago/internal"
-	"leago/options"
 	"net/url"
+
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/options"
 )
 
 const (

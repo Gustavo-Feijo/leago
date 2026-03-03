@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"leago"
-	"leago/api/lol/leagueexp"
-	"leago/examples"
-	"leago/regions"
 	"log"
 	"os"
+
+	"github.com/Gustavo-Feijo/leago"
+
+	"github.com/Gustavo-Feijo/leago/api/lol/leagueexp"
+	"github.com/Gustavo-Feijo/leago/examples"
+	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module leago
+module github.com/Gustavo-Feijo/leago
 
 go 1.26
 

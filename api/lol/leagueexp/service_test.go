@@ -2,12 +2,13 @@ package leagueexp
 
 import (
 	"context"
-	"leago/internal"
-	"leago/internal/mock"
-	"leago/regions"
 	"log/slog"
 	"net/http"
 	"testing"
+
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/internal/mock"
+	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

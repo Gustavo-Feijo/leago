@@ -1,8 +1,9 @@
 package championmastery
 
 import (
-	"leago/internal"
 	"strconv"
+
+	"github.com/Gustavo-Feijo/leago/internal"
 )
 
 type GetByPUUIDTopOption internal.RequestOption

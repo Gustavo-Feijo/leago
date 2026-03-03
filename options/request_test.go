@@ -1,9 +1,10 @@
 package options_test
 
 import (
-	"leago/internal"
-	"leago/options"
 	"testing"
+
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/options"
 
 	"github.com/stretchr/testify/require"
 )

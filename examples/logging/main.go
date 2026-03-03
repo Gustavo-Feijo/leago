@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
-	"leago"
-	"leago/options"
-	"leago/regions"
 	"log"
 	"log/slog"
 	"os"
+
+	"github.com/Gustavo-Feijo/leago"
+
+	"github.com/Gustavo-Feijo/leago/options"
+	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 func main() {

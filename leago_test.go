@@ -1,11 +1,12 @@
 package leago_test
 
 import (
-	"leago"
-	"leago/regions"
 	"log/slog"
 	"net/http"
 	"testing"
+
+	"github.com/Gustavo-Feijo/leago"
+	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/require"
 )

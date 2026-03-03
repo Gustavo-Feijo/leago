@@ -1,8 +1,9 @@
 package challenges
 
 import (
-	"leago/internal"
 	"strconv"
+
+	"github.com/Gustavo-Feijo/leago/internal"
 )
 
 type GetLeaderboardOption internal.RequestOption

@@ -1,10 +1,11 @@
 package riot
 
 import (
-	"leago/api/riot/account"
-	"leago/internal"
-	"leago/regions"
 	"log/slog"
+
+	"github.com/Gustavo-Feijo/leago/api/riot/account"
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 type RegionClient struct {

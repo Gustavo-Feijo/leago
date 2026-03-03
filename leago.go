@@ -1,13 +1,14 @@
 package leago
 
 import (
-	"leago/api/lol"
-	"leago/api/lor"
-	"leago/api/riot"
-	"leago/internal"
-	"leago/regions"
 	"log/slog"
 	"net/http"
+
+	"github.com/Gustavo-Feijo/leago/api/lol"
+	"github.com/Gustavo-Feijo/leago/api/lor"
+	"github.com/Gustavo-Feijo/leago/api/riot"
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 // Base client used by region and platform client.

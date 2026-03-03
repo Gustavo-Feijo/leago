@@ -1,6 +1,6 @@
 package options
 
-import "leago/internal"
+import "github.com/Gustavo-Feijo/leago/internal"
 
 type (
 	// PublicOption is a safe subset of RequestOption that is exposed to the public client.

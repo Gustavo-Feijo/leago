@@ -1,6 +1,6 @@
 package league
 
-import "leago/internal"
+import "github.com/Gustavo-Feijo/leago/internal"
 
 type PlatformClient struct {
 	client *internal.Client

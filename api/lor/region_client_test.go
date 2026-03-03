@@ -1,10 +1,11 @@
 package lor
 
 import (
-	"leago/regions"
 	"log/slog"
 	"net/http"
 	"testing"
+
+	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/require"
 )

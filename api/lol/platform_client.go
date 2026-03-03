@@ -1,16 +1,17 @@
 package lol
 
 import (
-	"leago/api/lol/challenges"
-	"leago/api/lol/champion"
-	"leago/api/lol/championmastery"
-	"leago/api/lol/clash"
-	"leago/api/lol/league"
-	"leago/api/lol/leagueexp"
-	"leago/api/lol/status"
-	"leago/internal"
-	"leago/regions"
 	"log/slog"
+
+	"github.com/Gustavo-Feijo/leago/api/lol/challenges"
+	"github.com/Gustavo-Feijo/leago/api/lol/champion"
+	"github.com/Gustavo-Feijo/leago/api/lol/championmastery"
+	"github.com/Gustavo-Feijo/leago/api/lol/clash"
+	"github.com/Gustavo-Feijo/leago/api/lol/league"
+	"github.com/Gustavo-Feijo/leago/api/lol/leagueexp"
+	"github.com/Gustavo-Feijo/leago/api/lol/status"
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 type PlatformClient struct {

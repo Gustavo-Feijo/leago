@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"leago/internal/mock"
 	"log/slog"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/Gustavo-Feijo/leago/internal/mock"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

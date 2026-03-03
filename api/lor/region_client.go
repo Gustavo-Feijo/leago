@@ -1,11 +1,12 @@
 package lor
 
 import (
-	"leago/api/lor/matches"
-	"leago/api/lor/ranked"
-	"leago/internal"
-	"leago/regions"
 	"log/slog"
+
+	"github.com/Gustavo-Feijo/leago/api/lor/matches"
+	"github.com/Gustavo-Feijo/leago/api/lor/ranked"
+	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 type RegionClient struct {
