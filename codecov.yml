@@ -5,6 +5,7 @@ coverage:
         target: 80%
 
 ignore:
+  - "examples/**"
   - "**/examples/**"
   - "**/mock/**"
   - "**/*_test.go"
