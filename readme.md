@@ -1,5 +1,10 @@
 # Leago
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/Gustavo-Feijo/leago.svg)](https://pkg.go.dev/github.com/Gustavo-Feijo/leago) 
+[![CI](https://github.com/Gustavo-Feijo/leago/actions/workflows/ci.yml/badge.svg)](https://github.com/Gustavo-Feijo/leago/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/github/Gustavo-Feijo/leago/branch/main/graph/badge.svg?token=QDCH0O72Y8)](https://codecov.io/github/Gustavo-Feijo/leago) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/Gustavo-Feijo/leago)](https://goreportcard.com/report/github.com/Gustavo-Feijo/leago)
+
 Leago is a simple client for the Riot APIs, providing clean API access to the Riot API and Data Dragon.
 
 ## Example usage
