@@ -25,6 +25,7 @@ type (
 		*baseClient
 		Riot *riot.RegionClient
 		Lor  *lor.RegionClient
+		Lol  *lol.RegionClient
 	}
 
 	// PlatformClient provides access to all platform related APIs.
@@ -46,6 +47,7 @@ func NewRegionClient(region regions.Region, apiKey string, opts ...Option) *Regi
 
 	rc.Riot = riot.NewRegionClient(rc.client, rc.logger, region, apiKey)
 	rc.Lor = lor.NewRegionClient(rc.client, rc.logger, region, apiKey)
+	rc.Lol = lol.NewRegionClient(rc.client, rc.logger, region, apiKey)
 
 	return rc
 }
