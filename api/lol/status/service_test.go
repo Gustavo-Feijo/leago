@@ -17,54 +17,6 @@ import (
 )
 
 var (
-	statusJson = `{
-    "id": "BR1",
-    "name": "Brazil",
-    "locales": [
-        "pt_BR"
-    ],
-    "maintenances": [],
-    "incidents": [
-        {
-            "id": 1,
-            "created_at": "2026-01-01T00:00:00.000000+00:00",
-            "updated_at": "2026-01-01T00:00:00.000000+00:00",
-            "archive_at": null,
-            "titles": [
-                {
-                    "locale": "pt_BR",
-                    "content": "Test"
-                }
-            ],
-            "updates": [
-                {
-                    "id": 15378,
-                    "created_at": "2026-01-01T00:00:00.000000+00:00",
-                    "updated_at": "2026-01-01T00:00:00.000000+00:00",
-                    "publish": true,
-                    "author": "Riot Games",
-                    "translations": [
-                        {
-                            "locale": "pt_BR",
-                            "content": "Test"
-                        }
-                    ],
-                    "publish_locations": [
-                        "game",
-                        "riotstatus"
-                    ]
-                }
-            ],
-            "platforms": [
-                "macos",
-                "windows"
-            ],
-            "maintenance_status": null,
-            "incident_severity": "info"
-        }
-    ]
-}`
-
 	expectedStatus = ServiceStatus{
 		ID:   "BR1",
 		Name: "Brazil",
@@ -112,11 +64,59 @@ var (
 			},
 		},
 	}
+
+	statusJSON = `{
+    "id": "BR1",
+    "name": "Brazil",
+    "locales": [
+        "pt_BR"
+    ],
+    "maintenances": [],
+    "incidents": [
+        {
+            "id": 1,
+            "created_at": "2026-01-01T00:00:00.000000+00:00",
+            "updated_at": "2026-01-01T00:00:00.000000+00:00",
+            "archive_at": null,
+            "titles": [
+                {
+                    "locale": "pt_BR",
+                    "content": "Test"
+                }
+            ],
+            "updates": [
+                {
+                    "id": 15378,
+                    "created_at": "2026-01-01T00:00:00.000000+00:00",
+                    "updated_at": "2026-01-01T00:00:00.000000+00:00",
+                    "publish": true,
+                    "author": "Riot Games",
+                    "translations": [
+                        {
+                            "locale": "pt_BR",
+                            "content": "Test"
+                        }
+                    ],
+                    "publish_locations": [
+                        "game",
+                        "riotstatus"
+                    ]
+                }
+            ],
+            "platforms": [
+                "macos",
+                "windows"
+            ],
+            "maintenance_status": null,
+            "incident_severity": "info"
+        }
+    ]
+}`
 )
 
 func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	return NewPlatformClient(baseClient)
 }
 
@@ -147,7 +147,7 @@ func TestGetStatus(t *testing.T) {
 		{
 			name:           "success",
 			statusCode:     http.StatusOK,
-			responseBody:   statusJson,
+			responseBody:   statusJSON,
 			expectedResult: expectedStatus,
 			wantErr:        false,
 		},
@@ -175,10 +175,10 @@ func TestGetStatus(t *testing.T) {
 
 			// Avoiding direct comparison of the returned due to timezones handling.
 			// Marshal first so both are plain jsons.
-			expectedJson, _ := json.Marshal(tt.expectedResult)
+			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expectedJson, jsonResp)
+			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}
 }

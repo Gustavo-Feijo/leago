@@ -99,7 +99,7 @@ func TestGetByPUUID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
 
 			resp, err := rc.GetByPUUID(context.Background(), tt.puuid)
@@ -115,8 +115,7 @@ func TestGetByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -166,7 +165,7 @@ func TestGetByRiotID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
 
 			resp, err := rc.GetByRiotID(context.Background(), tt.gameName, tt.tagLine)
@@ -182,8 +181,7 @@ func TestGetByRiotID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -233,7 +231,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
 
 			resp, err := rc.GetActiveRegionByPUUID(context.Background(), tt.game, tt.puuid)
@@ -249,8 +247,7 @@ func TestGetActiveRegionByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -300,7 +297,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
 			rc := NewRegionClient(baseClient)
 
 			resp, err := rc.GetActiveShardByPUUID(context.Background(), tt.game, tt.puuid)
@@ -316,8 +313,7 @@ func TestGetActiveShardByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

@@ -10,15 +10,15 @@ const (
 )
 
 type Client struct {
-	Http        Doer
+	HTTP        Doer
 	Logger      *slog.Logger
 	routePrefix string
 	apiKey      string
 }
 
-func NewHttpClient(client Doer, logger *slog.Logger, route, apiKey string) *Client {
+func NewHTTPClient(client Doer, logger *slog.Logger, route, apiKey string) *Client {
 	c := &Client{
-		Http:        client,
+		HTTP:        client,
 		Logger:      logger,
 		routePrefix: route,
 		apiKey:      apiKey,

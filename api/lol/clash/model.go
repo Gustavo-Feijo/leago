@@ -1,15 +1,15 @@
 package clash
 
+// Return a list of registrations of a player to clash tournaments.
+type Player struct {
+	Puuid    string   `json:"puuid"`
+	TeamID   string   `json:"teamId"`
+	Position Position `json:"position"`
+	Role     Role     `json:"role"`
+}
+
 type (
-	Player struct {
-		Puuid    string `json:"puuid"`
-		TeamID   string `json:"teamId"`
-		Position string `json:"position"` // UNSELECTED, FILL, TOP, JUNGLE, MIDDLE, BOTTOM, UTILITY
-		Role     string `json:"role"`     // CAPTAIN, MEMBER
-	}
-
-	PlayersResponse []Player
-
+	// Team information for a given clash  tournament.
 	Team struct {
 		ID           string       `json:"id"`
 		TournamentID int          `json:"tournamentId"`
@@ -22,11 +22,14 @@ type (
 	}
 
 	TeamPlayer struct {
-		Puuid    string `json:"puuid"`
-		Position string `json:"position"` // UNSELECTED, FILL, TOP, JUNGLE, MIDDLE, BOTTOM, UTILITY
-		Role     string `json:"role"`     // CAPTAIN, MEMBER
+		Puuid    string   `json:"puuid"`
+		Position Position `json:"position"`
+		Role     Role     `json:"role"`
 	}
+)
 
+type (
+	// Information of a given clash tournament.
 	Tournament struct {
 		ID               int               `json:"id"`
 		ThemeID          int               `json:"themeId"`
@@ -41,6 +44,22 @@ type (
 		StartTime        int64 `json:"startTime"`
 		Cancelled        bool  `json:"cancelled"`
 	}
+)
 
-	TournamentsResponse []Tournament
+type (
+	Position string // The position that the player will play on the team.
+	Role     string // Player role, if the team captain or member.
+)
+
+const (
+	PositionUnselected Position = "UNSELECTED"
+	PositionFill       Position = "FILL"
+	PositionTop        Position = "TOP"
+	PositionJungle     Position = "JUNGLE"
+	PositionMiddle     Position = "MIDDLE"
+	PositionBottom     Position = "BOTTOM"
+	PositionUtility    Position = "UTILITY"
+
+	RoleCaptain Role = "CAPTAIN"
+	RoleMember  Role = "MEMBER"
 )

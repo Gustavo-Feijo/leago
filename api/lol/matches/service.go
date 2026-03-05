@@ -29,7 +29,7 @@ func (rc *RegionClient) GetMatchesByPUUID(
 	)
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetMatchesByPUUID)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetMatchesByPUUID)},
 		getMatchByPUUIDOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -54,7 +54,7 @@ func (rc *RegionClient) GetReplaysByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetReplaysByPUUID),
+		internal.WithAPIMethod(MethodGetReplaysByPUUID),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -78,7 +78,7 @@ func (rc *RegionClient) GetMatchByID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetMatchByID),
+		internal.WithAPIMethod(MethodGetMatchByID),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -102,7 +102,7 @@ func (rc *RegionClient) GetMatchTimelineByID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetMatchTimelineByID),
+		internal.WithAPIMethod(MethodGetMatchTimelineByID),
 	}
 
 	uri := rc.client.GetURL(endpoint)

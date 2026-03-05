@@ -25,7 +25,7 @@ func (pc *PlatformClient) GetSummonerByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetSummonerByPUUID),
+		internal.WithAPIMethod(MethodGetSummonerByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)

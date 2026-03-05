@@ -9,27 +9,28 @@ import (
 )
 
 const (
-	MethodGetChallengerLeague     = "League.GetChallengerLeague"
-	MethodGetGrandmasterLeague    = "League.GetGrandmasterLeague"
-	MethodGetMasterLeague         = "League.GetMasterLeague"
+	MethodGetMasterLeague      = "League.GetMasterLeague"
+	MethodGetGrandmasterLeague = "League.GetGrandmasterLeague"
+	MethodGetChallengerLeague  = "League.GetChallengerLeague"
+
 	MethodGetLeagueEntries        = "League.GetLeagueEntries"
 	MethodGetLeagueEntriesByPUUID = "League.GetLeagueEntriesByPUUID"
 	MethodGetLeagueByID           = "League.GetLeagueByID"
 )
 
-// GetChallengerLeague returns all entries on the challenger league.
-func (pc *PlatformClient) GetChallengerLeague(
+// GetMasterLeague returns all entries on the master league.
+func (pc *PlatformClient) GetMasterLeague(
 	ctx context.Context,
 	queue Queue,
 	opts ...options.PublicOption,
 ) (RawLeague, error) {
 	endpoint := fmt.Sprintf(
-		"/lol/league/v4/challengerleagues/by-queue/%s",
+		"/lol/league/v4/masterleagues/by-queue/%s",
 		queue,
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetChallengerLeague),
+		internal.WithAPIMethod(MethodGetMasterLeague),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -53,7 +54,7 @@ func (pc *PlatformClient) GetGrandmasterLeague(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetGrandmasterLeague),
+		internal.WithAPIMethod(MethodGetGrandmasterLeague),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -65,19 +66,19 @@ func (pc *PlatformClient) GetGrandmasterLeague(
 	)
 }
 
-// GetMasterLeague returns all entries on the master league.
-func (pc *PlatformClient) GetMasterLeague(
+// GetChallengerLeague returns all entries on the challenger league.
+func (pc *PlatformClient) GetChallengerLeague(
 	ctx context.Context,
 	queue Queue,
 	opts ...options.PublicOption,
 ) (RawLeague, error) {
 	endpoint := fmt.Sprintf(
-		"/lol/league/v4/masterleagues/by-queue/%s",
+		"/lol/league/v4/challengerleagues/by-queue/%s",
 		queue,
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetMasterLeague),
+		internal.WithAPIMethod(MethodGetChallengerLeague),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -107,7 +108,7 @@ func (pc *PlatformClient) GetLeagueEntries(
 	)
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetLeagueEntries)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetLeagueEntries)},
 		getLeagueOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -132,7 +133,7 @@ func (pc *PlatformClient) GetLeagueEntriesByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetLeagueEntriesByPUUID),
+		internal.WithAPIMethod(MethodGetLeagueEntriesByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -156,7 +157,7 @@ func (pc *PlatformClient) GetLeagueByID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetLeagueByID),
+		internal.WithAPIMethod(MethodGetLeagueByID),
 	}
 
 	uri := pc.client.GetURL(endpoint)

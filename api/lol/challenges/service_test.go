@@ -26,6 +26,7 @@ var (
 		Leaderboard:    true,
 		Thresholds:     map[Level]float64{LevelGold: 100.0},
 	}
+
 	configInfoJSON = `{
 		"id": 1,
 		"localizedNames": {"en_US": {"name": "Test"}},
@@ -76,7 +77,7 @@ var (
 		Preferences: PlayerClientPreferences{
 			BannerAccent:             "banner1",
 			Title:                    "title1",
-			ChallengeIds:             []string{"1", "2"},
+			ChallengeIDs:             []string{"1", "2"},
 			CrestBorder:              "crest1",
 			PrestigeCrestBorderLevel: 3,
 		},
@@ -123,7 +124,7 @@ var (
 
 func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	return NewPlatformClient(baseClient)
 }
 
@@ -173,13 +174,11 @@ func TestGetConfig(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -230,12 +229,11 @@ func TestGetConfigByID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -286,13 +284,11 @@ func TestGetLeaderboardByChallengeIDByLevel(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -343,13 +339,11 @@ func TestGetPercentiles(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -400,13 +394,11 @@ func TestGetPercentilesByChallengeID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -457,12 +449,11 @@ func TestGetPlayerInfoByPUUID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

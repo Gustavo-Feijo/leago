@@ -12,15 +12,15 @@ type (
 	RequestOption func(*requestOptions)
 )
 
-// withApiKey applies the API Key for the AuthRequest.
-func withApiKey(apiKey string) RequestOption {
+// withAPIKey applies the API Key for the AuthRequest.
+func withAPIKey(apiKey string) RequestOption {
 	return func(ro *requestOptions) {
 		ro.apiKey = apiKey
 	}
 }
 
-// WithApiMethod sets the API method used (Logging).
-func WithApiMethod(method string) RequestOption {
+// WithAPIMethod sets the API method used (Logging).
+func WithAPIMethod(method string) RequestOption {
 	return func(ro *requestOptions) {
 		ro.apiMethod = method
 	}
@@ -33,8 +33,8 @@ func WithBody(body any) RequestOption {
 	}
 }
 
-// WithHttpMethod sets the request method (Default to GET).
-func WithHttpMethod(method string) RequestOption {
+// WithHTTPMethod sets the request method (Default to GET).
+func WithHTTPMethod(method string) RequestOption {
 	return func(ro *requestOptions) {
 		ro.httpMethod = method
 	}

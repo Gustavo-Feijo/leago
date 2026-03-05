@@ -21,18 +21,18 @@ func (pc *PlatformClient) GetByPUUID(
 	ctx context.Context,
 	puuid string,
 	opts ...options.PublicOption,
-) (MasteryList, error) {
+) ([]Mastery, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/champion-mastery/v4/champion-masteries/by-puuid/%s",
 		url.PathEscape(puuid),
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetByPUUID),
+		internal.WithAPIMethod(MethodGetByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[MasteryList](
+	return internal.AuthRequest[[]Mastery](
 		ctx,
 		pc.client,
 		uri,
@@ -46,7 +46,7 @@ func (pc *PlatformClient) GetByPUUIDTop(
 	puuid string,
 	endpointOpts []GetByPUUIDTopOption,
 	opts ...options.PublicOption,
-) (MasteryList, error) {
+) ([]Mastery, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/champion-mastery/v4/champion-masteries/by-puuid/%s/top",
 		url.PathEscape(puuid),
@@ -54,12 +54,12 @@ func (pc *PlatformClient) GetByPUUIDTop(
 
 	// Adds endpoint specific options, like count.
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetByPUUIDTop)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetByPUUIDTop)},
 		puuidTopOptionsToRequestOptions(endpointOpts)...,
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[MasteryList](
+	return internal.AuthRequest[[]Mastery](
 		ctx,
 		pc.client,
 		uri,
@@ -81,7 +81,7 @@ func (pc *PlatformClient) GetByPUUIDByChampion(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetByPUUIDByChampion),
+		internal.WithAPIMethod(MethodGetByPUUIDByChampion),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -105,7 +105,7 @@ func (pc *PlatformClient) GetScoreByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetScoreByPUUID),
+		internal.WithAPIMethod(MethodGetScoreByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)

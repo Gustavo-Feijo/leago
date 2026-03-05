@@ -16,32 +16,6 @@ import (
 )
 
 var (
-	matchJSON = `{
-		"metadata": {
-			"dataVersion": "2",
-			"matchId": "BR1_123",
-			"participants": ["puuid1"]
-		},
-		"info": {
-			"endOfGameResult": "GameComplete",
-			"gameCreation": 1,
-			"gameDuration": 1800,
-			"gameEndTimestamp": 2,
-			"gameId": 123,
-			"gameMode": "CLASSIC",
-			"gameName": "teambuilder-match-123",
-			"gameStartTimestamp": 1,
-			"gameType": "MATCHED_GAME",
-			"gameVersion": "26.1.1",
-			"mapId": 11,
-			"participants": [],
-			"platformId": "BR1",
-			"queueId": 420,
-			"teams": [],
-			"tournamentCode": ""
-		}
-	}`
-
 	expectedMatch = Match{
 		Metadata: MatchMetadata{
 			DataVersion:  "2",
@@ -68,6 +42,40 @@ var (
 		},
 	}
 
+	matchJSON = `{
+		"metadata": {
+			"dataVersion": "2",
+			"matchId": "BR1_123",
+			"participants": ["puuid1"]
+		},
+		"info": {
+			"endOfGameResult": "GameComplete",
+			"gameCreation": 1,
+			"gameDuration": 1800,
+			"gameEndTimestamp": 2,
+			"gameId": 123,
+			"gameMode": "CLASSIC",
+			"gameName": "teambuilder-match-123",
+			"gameStartTimestamp": 1,
+			"gameType": "MATCHED_GAME",
+			"gameVersion": "26.1.1",
+			"mapId": 11,
+			"participants": [],
+			"platformId": "BR1",
+			"queueId": 420,
+			"teams": [],
+			"tournamentCode": ""
+		}
+	}`
+
+	expectedReplays = Replays{
+		Total: 2,
+		MatchFileURLs: []string{
+			"https://replay1",
+			"https://replay2",
+		},
+	}
+
 	replaysJSON = `{
 		"total": 2,
 		"matchFileURLs": [
@@ -76,11 +84,18 @@ var (
 		]
 	}`
 
-	expectedReplays = Replays{
-		Total: 2,
-		MatchFileURLs: []string{
-			"https://replay1",
-			"https://replay2",
+	expectedTimeline = Timeline{
+		Metadata: MetadataTimeLine{
+			DataVersion:  "2",
+			MatchID:      "BR1_123",
+			Participants: []string{"puuid1"},
+		},
+		Info: InfoTimeLine{
+			EndOfGameResult: "GameComplete",
+			FrameInterval:   60000,
+			GameID:          123,
+			Participants:    []ParticipantTimeLine{},
+			Frames:          []FrameTimeLine{},
 		},
 	}
 
@@ -98,26 +113,11 @@ var (
 			"frames": []
 		}
 	}`
-
-	expectedTimeline = Timeline{
-		Metadata: MetadataTimeLine{
-			DataVersion:  "2",
-			MatchID:      "BR1_123",
-			Participants: []string{"puuid1"},
-		},
-		Info: InfoTimeLine{
-			EndOfGameResult: "GameComplete",
-			FrameInterval:   60000,
-			GameID:          123,
-			Participants:    []ParticipantTimeLine{},
-			Frames:          []FrameTimeLine{},
-		},
-	}
 )
 
 func newTestRegionClient(statusCode int, responseBody string, httpErr error) *RegionClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
 
 	return NewRegionClient(baseClient)
 }
@@ -168,17 +168,16 @@ func TestGetMatchByID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
 			require.NotNil(t, resp)
 
-			expectedJson, _ := json.Marshal(tt.expectedResult)
+			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expectedJson, jsonResp)
+			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}
 }
@@ -279,16 +278,15 @@ func TestGetReplaysByPUUID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
 
-			expectedJson, _ := json.Marshal(tt.expectedResult)
+			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expectedJson, jsonResp)
+			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}
 }
@@ -344,10 +342,10 @@ func TestGetMatchTimelineByID(t *testing.T) {
 
 			require.Nil(t, err)
 
-			expectedJson, _ := json.Marshal(tt.expectedResult)
+			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expectedJson, jsonResp)
+			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}
 }

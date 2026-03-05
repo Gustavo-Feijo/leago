@@ -25,7 +25,7 @@ func (pc *PlatformClient) GetGameByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetGameByPUUID),
+		internal.WithAPIMethod(MethodGetGameByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)

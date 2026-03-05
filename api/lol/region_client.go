@@ -13,7 +13,7 @@ type RegionClient struct {
 }
 
 func NewRegionClient(client internal.Doer, logger *slog.Logger, region regions.Region, apiKey string) *RegionClient {
-	baseClient := internal.NewHttpClient(client, logger, string(region), apiKey)
+	baseClient := internal.NewHTTPClient(client, logger, string(region), apiKey)
 	c := &RegionClient{
 		Matches: matches.NewRegionClient(baseClient),
 	}

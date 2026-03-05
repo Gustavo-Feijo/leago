@@ -101,7 +101,7 @@ var (
 
 func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	return NewPlatformClient(baseClient)
 }
 

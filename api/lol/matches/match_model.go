@@ -121,7 +121,7 @@ type (
 		PlayerAugment2                 int        `json:"playerAugment2"`
 		PlayerAugment3                 int        `json:"playerAugment3"`
 		PlayerAugment4                 int        `json:"playerAugment4"`
-		PlayerSubteamId                int        `json:"playerSubteamId"`
+		PlayerSubteamID                int        `json:"playerSubteamId"`
 		ProfileIcon                    int        `json:"profileIcon"`
 		Puuid                          string     `json:"puuid"`
 		QuadraKills                    int        `json:"quadraKills"`

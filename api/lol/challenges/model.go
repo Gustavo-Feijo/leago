@@ -1,31 +1,32 @@
 package challenges
 
+// List of Basic challenge configuration info (Includes translations).
+type ConfigInfo struct {
+	ID             int64                        `json:"id"`
+	LocalizedNames map[string]map[string]string `json:"localizedNames"`
+	State          State                        `json:"state"`
+	Tracking       Tracking                     `json:"tracking"`
+	StartTimestamp int64                        `json:"startTimestamp"`
+	EndTimestamp   int64                        `json:"endTimestamp"`
+	Leaderboard    bool                         `json:"leaderboard"`
+	Thresholds     map[Level]float64            `json:"thresholds"`
+}
+
 type (
-	State    string
-	Tracking string
-	Level    string
-	TopLevel string
-
-	ConfigInfo struct {
-		ID             int64                        `json:"id"`
-		LocalizedNames map[string]map[string]string `json:"localizedNames"`
-		State          State                        `json:"state"`
-		Tracking       Tracking                     `json:"tracking"`
-		StartTimestamp int64                        `json:"startTimestamp"`
-		EndTimestamp   int64                        `json:"endTimestamp"`
-		Leaderboard    bool                         `json:"leaderboard"`
-		Thresholds     map[Level]float64            `json:"thresholds"`
-	}
-
-	Leaderboard []struct {
-		Puuid    string  `json:"puuid"`
-		Value    float64 `json:"value"`
-		Position int     `json:"position"`
-	}
-
+	// Map representing the percentile of players to achieve a given level in a challenge.
 	PercentileMap    map[int64]LevelPercentiles
 	LevelPercentiles map[Level]float64
+)
 
+// Leaderboard of top players on a given challenge.
+type Leaderboard []struct {
+	Puuid    string  `json:"puuid"`
+	Value    float64 `json:"value"`
+	Position int     `json:"position"`
+}
+
+type (
+	// Player information with their challenges progression.
 	PlayerInfo struct {
 		Challenges     []PlayerChallenges         `json:"challenges"`
 		Preferences    PlayerClientPreferences    `json:"preferences"`
@@ -46,7 +47,7 @@ type (
 	PlayerClientPreferences struct {
 		BannerAccent             string   `json:"bannerAccent"`
 		Title                    string   `json:"title"`
-		ChallengeIds             []string `json:"challengeIds"`
+		ChallengeIDs             []string `json:"challengeIds"`
 		CrestBorder              string   `json:"crestBorder"`
 		PrestigeCrestBorderLevel int      `json:"prestigeCrestBorderLevel"`
 	}
@@ -57,6 +58,14 @@ type (
 		Max        int64   `json:"max"`
 		Percentile float64 `json:"percentile"`
 	}
+)
+
+type (
+	State    string // Current state of a given challenge.
+	Tracking string // How the challenge is tracked, if it is seasonal or lifetime.
+
+	Level    string // Challenge level.
+	TopLevel string // Challenge level, only including the top rated levels.
 )
 
 const (

@@ -89,7 +89,7 @@ func TestGetChallengerLeague(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -181,7 +181,7 @@ func TestGetGrandmasterLeague(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -272,7 +272,7 @@ func TestGetMasterLeague(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -428,7 +428,7 @@ func TestGetLeagueEntries(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -454,7 +454,6 @@ func TestGetLeagueEntries(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
@@ -531,7 +530,7 @@ func TestGetLeagueEntriesByPUUID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -551,7 +550,6 @@ func TestGetLeagueEntriesByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
@@ -686,7 +684,7 @@ func TestGetLeagueByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -706,7 +704,6 @@ func TestGetLeagueByID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}

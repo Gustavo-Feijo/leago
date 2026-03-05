@@ -32,7 +32,9 @@ type (
 		GameOutcome string   `json:"game_outcome"`
 		OrderOfPlay int      `json:"order_of_play"`
 	}
+)
 
+type (
 	GameMode   string
 	GameType   string
 	GameFormat string

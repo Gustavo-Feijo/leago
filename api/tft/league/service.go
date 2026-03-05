@@ -29,7 +29,7 @@ func (pc *PlatformClient) GetMasterLeague(
 	endpoint := "/tft/league/v1/master"
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetMasterLeague)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetMasterLeague)},
 		upperLeagueOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -51,7 +51,7 @@ func (pc *PlatformClient) GetGrandmasterLeague(
 	endpoint := "/tft/league/v1/grandmaster"
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetGrandmasterLeague)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetGrandmasterLeague)},
 		upperLeagueOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -73,7 +73,7 @@ func (pc *PlatformClient) GetChallengerLeague(
 	endpoint := "/tft/league/v1/challenger"
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetChallengerLeague)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetChallengerLeague)},
 		upperLeagueOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -99,7 +99,7 @@ func (pc *PlatformClient) GetLeagueByID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetLeagueByID),
+		internal.WithAPIMethod(MethodGetLeagueByID),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -127,7 +127,7 @@ func (pc *PlatformClient) GetLeagueEntries(
 	)
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetLeagueEntries)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetLeagueEntries)},
 		leagueOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -152,7 +152,7 @@ func (pc *PlatformClient) GetLeagueEntriesByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetLeagueEntriesByPUUID),
+		internal.WithAPIMethod(MethodGetLeagueEntriesByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -177,7 +177,7 @@ func (pc *PlatformClient) GetRatedLadder(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetRatedLadder),
+		internal.WithAPIMethod(MethodGetRatedLadder),
 	}
 
 	uri := pc.client.GetURL(endpoint)

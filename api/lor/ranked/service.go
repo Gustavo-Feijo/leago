@@ -19,7 +19,7 @@ func (rc *RegionClient) GetLeaderboards(
 	endpoint := "/lor/ranked/v1/leaderboards"
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetLeaderboards),
+		internal.WithAPIMethod(MethodGetLeaderboards),
 	}
 
 	uri := rc.client.GetURL(endpoint)

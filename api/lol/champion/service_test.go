@@ -17,8 +17,8 @@ import (
 var (
 	expectedRotation = Rotation{
 		MaxNewPlayerLevel:            10,
-		FreeChampionIdsForNewPlayers: []int{1, 2, 3},
-		FreeChampionIds:              []int{4, 5, 6},
+		FreeChampionIDsForNewPlayers: []int{1, 2, 3},
+		FreeChampionIDs:              []int{4, 5, 6},
 	}
 
 	rotationJSON = `
@@ -67,7 +67,7 @@ func TestGetRotation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 
 			resp, err := pc.GetRotation(context.Background())
@@ -83,8 +83,7 @@ func TestGetRotation(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

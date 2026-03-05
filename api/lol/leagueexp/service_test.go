@@ -146,7 +146,7 @@ func TestGetLeague(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(
+			baseClient := internal.NewHTTPClient(
 				mockDoer,
 				slog.Default(),
 				string(regions.PlatformBR1),
@@ -178,7 +178,6 @@ func TestGetLeague(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}

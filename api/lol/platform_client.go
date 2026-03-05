@@ -29,7 +29,7 @@ type PlatformClient struct {
 }
 
 func NewPlatformClient(client internal.Doer, logger *slog.Logger, region regions.Platform, apiKey string) *PlatformClient {
-	baseClient := internal.NewHttpClient(client, logger, string(region), apiKey)
+	baseClient := internal.NewHTTPClient(client, logger, string(region), apiKey)
 	c := &PlatformClient{
 		Challenges:      challenges.NewPlatformClient(baseClient),
 		ChampionMastery: championmastery.NewPlatformClient(baseClient),

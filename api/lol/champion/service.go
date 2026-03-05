@@ -19,7 +19,7 @@ func (pc *PlatformClient) GetRotation(
 	endpoint := "/lol/platform/v3/champion-rotations"
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetRotation),
+		internal.WithAPIMethod(MethodGetRotation),
 	}
 
 	uri := pc.client.GetURL(endpoint)

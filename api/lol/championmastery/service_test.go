@@ -73,7 +73,7 @@ var (
 		}
 	`
 
-	expectedMasteries = MasteryList{expectedMastery}
+	expectedMasteries = []Mastery{expectedMastery}
 	masteriesJSON     = fmt.Sprintf("[%s]", masteryJSON)
 )
 
@@ -84,7 +84,7 @@ func TestGetByPUUID(t *testing.T) {
 		puuid          string
 		httpErr        error
 		responseBody   string
-		expectedResult MasteryList
+		expectedResult []Mastery
 		wantErr        bool
 		wantRiotErr    bool
 	}{
@@ -118,7 +118,7 @@ func TestGetByPUUID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 
 			resp, err := pc.GetByPUUID(context.Background(), tt.puuid)
@@ -135,9 +135,7 @@ func TestGetByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -149,7 +147,7 @@ func TestGetByPUUIDTop(t *testing.T) {
 		puuid          string
 		httpErr        error
 		responseBody   string
-		expectedResult MasteryList
+		expectedResult []Mastery
 		wantErr        bool
 		wantRiotErr    bool
 	}{
@@ -183,7 +181,7 @@ func TestGetByPUUIDTop(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 
 			defaultCount := 5
@@ -205,10 +203,9 @@ func TestGetByPUUIDTop(t *testing.T) {
 			countParam := mockDoer.CapturedReq.URL.Query().Get("count")
 			val, paramErr := strconv.ParseInt(countParam, 10, 0)
 			assert.Nil(t, paramErr)
-			assert.Equal(t, int(val), defaultCount)
 
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, defaultCount, int(val))
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -218,7 +215,7 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 		name           string
 		statusCode     int
 		puuid          string
-		championId     int64
+		championID     int64
 		httpErr        error
 		responseBody   string
 		expectedResult Mastery
@@ -228,7 +225,7 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 		{
 			name:         "riot error",
 			puuid:        "test-puuid",
-			championId:   12,
+			championID:   12,
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
 			wantErr:      true,
@@ -237,7 +234,7 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 		{
 			name:         "invalid json",
 			puuid:        "test-puuid",
-			championId:   125,
+			championID:   125,
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
 			wantErr:      true,
@@ -246,7 +243,7 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 		{
 			name:           "success",
 			puuid:          "test-puuid",
-			championId:     266,
+			championID:     266,
 			statusCode:     http.StatusOK,
 			responseBody:   masteryJSON,
 			expectedResult: expectedMastery,
@@ -258,10 +255,10 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 
-			resp, err := pc.GetByPUUIDByChampion(context.Background(), tt.puuid, tt.championId)
+			resp, err := pc.GetByPUUIDByChampion(context.Background(), tt.puuid, tt.championID)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -276,7 +273,7 @@ func TestGetByPUUIDByChampion(t *testing.T) {
 
 			require.Nil(t, err)
 
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -322,7 +319,7 @@ func TestGetScoreByPUUID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 
 			resp, err := pc.GetScoreByPUUID(context.Background(), tt.puuid)
@@ -339,9 +336,7 @@ func TestGetScoreByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

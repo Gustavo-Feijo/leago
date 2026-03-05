@@ -26,7 +26,7 @@ func (pc *PlatformClient) GetConfig(
 	endpoint := "/lol/challenges/v1/challenges/config"
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetConfig),
+		internal.WithAPIMethod(MethodGetConfig),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -50,7 +50,7 @@ func (pc *PlatformClient) GetConfigByID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetConfigByID),
+		internal.WithAPIMethod(MethodGetConfigByID),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -77,7 +77,7 @@ func (pc *PlatformClient) GetLeaderboardByChallengeIDByLevel(
 	)
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetLeaderboardByChallengeIDByLevel)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetLeaderboardByChallengeIDByLevel)},
 		getLeaderboardOptionsToRequestOptions(endpointOpts)...,
 	)
 
@@ -98,7 +98,7 @@ func (pc *PlatformClient) GetPercentiles(
 	endpoint := "/lol/challenges/v1/challenges/percentiles"
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetPercentiles),
+		internal.WithAPIMethod(MethodGetPercentiles),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -122,7 +122,7 @@ func (pc *PlatformClient) GetPercentilesByChallengeID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetPercentilesByChallengeID),
+		internal.WithAPIMethod(MethodGetPercentilesByChallengeID),
 	}
 
 	uri := pc.client.GetURL(endpoint)
@@ -146,7 +146,7 @@ func (pc *PlatformClient) GetPlayerInfoByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetPlayerInfoByPUUID),
+		internal.WithAPIMethod(MethodGetPlayerInfoByPUUID),
 	}
 
 	uri := pc.client.GetURL(endpoint)

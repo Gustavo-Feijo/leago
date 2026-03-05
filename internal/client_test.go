@@ -12,13 +12,13 @@ import (
 )
 
 func TestNewHTTPClient(t *testing.T) {
-	client := NewHttpClient(http.DefaultClient, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	client := NewHTTPClient(http.DefaultClient, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	require.NotNil(t, client)
-	assert.Equal(t, client.apiKey, "apiKey")
+	assert.Equal(t, "apiKey", client.apiKey)
 }
 
 func TestGetURL(t *testing.T) {
-	client := NewHttpClient(http.DefaultClient, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	client := NewHTTPClient(http.DefaultClient, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	url := client.GetURL("/testapi")
 	assert.Contains(t, url, string(regions.PlatformBR1))
 }

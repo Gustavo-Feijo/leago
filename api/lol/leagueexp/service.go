@@ -29,7 +29,7 @@ func (pc *PlatformClient) GetLeague(
 	)
 
 	defaultOpts := append(
-		[]internal.RequestOption{internal.WithApiMethod(MethodGetLeague)},
+		[]internal.RequestOption{internal.WithAPIMethod(MethodGetLeague)},
 		getLeagueOptionsToRequestOptions(endpointOpts)...,
 	)
 

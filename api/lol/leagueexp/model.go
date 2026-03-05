@@ -26,7 +26,9 @@ type (
 		Target   int    `json:"target"`
 		Wins     int    `json:"wins"`
 	}
+)
 
+type (
 	Queue    string
 	Tier     string
 	Division string

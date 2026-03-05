@@ -1,8 +1,7 @@
 package championmastery
 
 type (
-	MasteryList []Mastery
-
+	// Mastery entry for a given player with a given champion.
 	Mastery struct {
 		Puuid                        string               `json:"puuid"`
 		ChampionPointsUntilNextLevel int64                `json:"championPointsUntilNextLevel"`
@@ -32,5 +31,6 @@ type (
 		MaximumReward int    `json:"maximumReward"`
 	}
 
+	// Sum of all individual champions mastery levels.
 	MasteryScore int
 )

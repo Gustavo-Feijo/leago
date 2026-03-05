@@ -17,21 +17,11 @@ import (
 
 func newTestRegionClient(statusCode int, responseBody string, httpErr error) *RegionClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
 	return NewRegionClient(baseClient)
 }
 
 var (
-	leaderboardJSON = `{
-   "players":[
-      {
-         "name":"test",
-         "rank":1,
-         "lp":100.0
-      }
-   ]
-}`
-
 	expectedLeaderboard = Leaderboard{
 		Players: []Player{
 			{
@@ -41,6 +31,16 @@ var (
 			},
 		},
 	}
+
+	leaderboardJSON = `{
+   "players":[
+      {
+         "name":"test",
+         "rank":1,
+         "lp":100.0
+      }
+   ]
+}`
 )
 
 func TestGetLeaderboard(t *testing.T) {
@@ -95,10 +95,10 @@ func TestGetLeaderboard(t *testing.T) {
 			require.NotNil(t, resp)
 
 			// Marshal both to not run into timezone problems.
-			expectedJson, _ := json.Marshal(tt.expectedResult)
+			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expectedJson, jsonResp)
+			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}
 }

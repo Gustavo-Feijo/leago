@@ -17,7 +17,7 @@ func AuthRequest[T any](ctx context.Context, client *Client, uri string, opts ..
 		ctx,
 		client,
 		uri,
-		append(opts, withApiKey(client.apiKey))...,
+		append(opts, withAPIKey(client.apiKey))...,
 	)
 }
 
@@ -93,7 +93,7 @@ func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, error)
 		"route", client.routePrefix,
 	)
 
-	resp, err := client.Http.Do(req)
+	resp, err := client.HTTP.Do(req)
 	if err != nil {
 		logger.Error("request failed", "error", err)
 		return respData, err

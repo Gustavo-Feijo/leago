@@ -33,7 +33,7 @@ func (e errorReader) Read(p []byte) (int, error) {
 
 func newTestClient(doer *mock.Doer) *Client {
 	return &Client{
-		Http:        doer,
+		HTTP:        doer,
 		Logger:      slog.Default(),
 		routePrefix: "test",
 		apiKey:      "apiKey",
@@ -62,7 +62,7 @@ func TestAuthRequest(t *testing.T) {
 			name: "invalid request",
 			url:  "http://testexample.com",
 			reqOpts: []RequestOption{
-				WithHttpMethod("invalid::{}"), // http.NewRequestWithContext validates the method tokens.
+				WithHTTPMethod("invalid::{}"), // http.NewRequestWithContext validates the method tokens.
 			},
 			wantErr: true,
 		},
@@ -70,7 +70,7 @@ func TestAuthRequest(t *testing.T) {
 			name: "invalid post request body",
 			url:  "http://testexample.com",
 			reqOpts: []RequestOption{
-				WithHttpMethod(http.MethodPost),
+				WithHTTPMethod(http.MethodPost),
 				WithBody(make(chan int)), // json.Marshal will fail with channels.
 			},
 			wantErr: true,
@@ -115,11 +115,11 @@ func TestAuthRequest(t *testing.T) {
 			url:            "http://testexample.com",
 			httpStatusCode: 204,
 			reqOpts: []RequestOption{
-				WithHttpMethod(http.MethodPost),
+				WithHTTPMethod(http.MethodPost),
 				WithBody(PostRequest{
 					Name: "posttest",
 				}),
-				WithApiMethod("Test.Create"),
+				WithAPIMethod("Test.Create"),
 			},
 			httpBody: io.NopCloser(strings.NewReader(`{"name":"posttest"}`)),
 			wantName: "posttest",

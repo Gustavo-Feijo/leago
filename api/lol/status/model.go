@@ -3,6 +3,7 @@ package status
 import "time"
 
 type (
+	// Status of the LoL services.
 	ServiceStatus struct {
 		ID           string   `json:"id"`
 		Name         string   `json:"name"`
@@ -37,7 +38,9 @@ type (
 		CreatedAt        time.Time         `json:"created_at"`
 		UpdatedAt        time.Time         `json:"updated_at"`
 	}
+)
 
+type (
 	PublishLocation   string
 	MaintenanceStatus string
 	IncidentSeverity  string

@@ -26,7 +26,7 @@ func (rc *RegionClient) GetMatchesByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetMatchesByPUUID),
+		internal.WithAPIMethod(MethodGetMatchesByPUUID),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -50,7 +50,7 @@ func (rc *RegionClient) GetMatchByID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetMatchByID),
+		internal.WithAPIMethod(MethodGetMatchByID),
 	}
 
 	uri := rc.client.GetURL(endpoint)

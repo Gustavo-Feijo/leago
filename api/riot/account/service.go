@@ -30,7 +30,7 @@ func (rc *RegionClient) GetActiveRegionByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetActiveRegionByPUUID),
+		internal.WithAPIMethod(MethodGetActiveRegionByPUUID),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -56,7 +56,7 @@ func (rc *RegionClient) GetActiveShardByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetActiveShardByPUUID),
+		internal.WithAPIMethod(MethodGetActiveShardByPUUID),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -80,7 +80,7 @@ func (rc *RegionClient) GetByPUUID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetByPUUID),
+		internal.WithAPIMethod(MethodGetByPUUID),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -106,7 +106,7 @@ func (rc *RegionClient) GetByRiotID(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetByRiotID),
+		internal.WithAPIMethod(MethodGetByRiotID),
 	}
 
 	uri := rc.client.GetURL(endpoint)

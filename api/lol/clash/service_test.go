@@ -10,26 +10,11 @@ import (
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
 	"github.com/Gustavo-Feijo/leago/regions"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	tournamentJSON = `{
-		"id":1,
-		"themeId":2,
-		"nameKey":"clash",
-		"nameKeySecondary":"secondary",
-		"schedule":[{
-			"id":10,
-			"registrationTime":1000,
-			"startTime":2000,
-			"cancelled":false
-		}]
-	}`
-	tournamentsJSON = fmt.Sprintf("[%s]", tournamentJSON)
-
 	expectedTournament = Tournament{
 		ID:               1,
 		ThemeID:          2,
@@ -44,7 +29,23 @@ var (
 			},
 		},
 	}
-	expectedTournaments = TournamentsResponse{expectedTournament}
+
+	tournamentJSON = `{
+		"id":1,
+		"themeId":2,
+		"nameKey":"clash",
+		"nameKeySecondary":"secondary",
+		"schedule":[{
+			"id":10,
+			"registrationTime":1000,
+			"startTime":2000,
+			"cancelled":false
+		}]
+	}`
+
+	expectedTournaments = []Tournament{expectedTournament}
+
+	tournamentsJSON = fmt.Sprintf("[%s]", tournamentJSON)
 )
 
 func TestGetPlayerByPUUID(t *testing.T) {
@@ -54,7 +55,7 @@ func TestGetPlayerByPUUID(t *testing.T) {
 		puuid          string
 		httpErr        error
 		responseBody   string
-		expectedResult PlayersResponse
+		expectedResult []Player
 		wantErr        bool
 		wantRiotErr    bool
 	}{
@@ -84,7 +85,7 @@ func TestGetPlayerByPUUID(t *testing.T) {
 				"position":"TOP",
 				"role":"CAPTAIN"
 			}]`,
-			expectedResult: PlayersResponse{
+			expectedResult: []Player{
 				{
 					Puuid:    "test-puuid",
 					TeamID:   "456",
@@ -100,7 +101,7 @@ func TestGetPlayerByPUUID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
 
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 			resp, err := pc.GetPlayerByPUUID(context.Background(), tt.puuid)
 
@@ -116,9 +117,7 @@ func TestGetPlayerByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -127,7 +126,7 @@ func TestGetTeamByID(t *testing.T) {
 	tests := []struct {
 		name           string
 		statusCode     int
-		teamId         string
+		teamID         string
 		httpErr        error
 		responseBody   string
 		expectedResult Team
@@ -136,7 +135,7 @@ func TestGetTeamByID(t *testing.T) {
 	}{
 		{
 			name:         "riot error",
-			teamId:       "test-team-id",
+			teamID:       "test-team-id",
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
 			wantErr:      true,
@@ -144,7 +143,7 @@ func TestGetTeamByID(t *testing.T) {
 		},
 		{
 			name:         "unmatched json",
-			teamId:       "test-team-id",
+			teamID:       "test-team-id",
 			statusCode:   http.StatusOK,
 			responseBody: `["shouldbeobject"]`,
 			wantErr:      true,
@@ -152,7 +151,7 @@ func TestGetTeamByID(t *testing.T) {
 		},
 		{
 			name:       "success",
-			teamId:     "test-team-id",
+			teamID:     "test-team-id",
 			statusCode: http.StatusOK,
 			responseBody: `{
 				"id":"test-team-id",
@@ -191,9 +190,9 @@ func TestGetTeamByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
-			resp, err := pc.GetTeamByID(context.Background(), tt.teamId)
+			resp, err := pc.GetTeamByID(context.Background(), tt.teamID)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -203,12 +202,11 @@ func TestGetTeamByID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -219,7 +217,7 @@ func TestGetTournaments(t *testing.T) {
 		statusCode     int
 		httpErr        error
 		responseBody   string
-		expectedResult TournamentsResponse
+		expectedResult []Tournament
 		wantErr        bool
 		wantRiotErr    bool
 	}{
@@ -249,7 +247,7 @@ func TestGetTournaments(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
 			resp, err := pc.GetTournaments(context.Background())
 
@@ -261,13 +259,11 @@ func TestGetTournaments(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -276,7 +272,7 @@ func TestGetTournamentByTeamID(t *testing.T) {
 	tests := []struct {
 		name           string
 		statusCode     int
-		teamId         string
+		teamID         string
 		httpErr        error
 		responseBody   string
 		expectedResult Tournament
@@ -285,7 +281,7 @@ func TestGetTournamentByTeamID(t *testing.T) {
 	}{
 		{
 			name:         "riot error",
-			teamId:       "test-team-id",
+			teamID:       "test-team-id",
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
 			wantErr:      true,
@@ -293,7 +289,7 @@ func TestGetTournamentByTeamID(t *testing.T) {
 		},
 		{
 			name:         "unmatched json",
-			teamId:       "test-team-id",
+			teamID:       "test-team-id",
 			statusCode:   http.StatusOK,
 			responseBody: `["shouldbeobject"]`,
 			wantErr:      true,
@@ -301,7 +297,7 @@ func TestGetTournamentByTeamID(t *testing.T) {
 		},
 		{
 			name:           "success",
-			teamId:         "test-team-id",
+			teamID:         "test-team-id",
 			statusCode:     http.StatusOK,
 			responseBody:   tournamentJSON,
 			expectedResult: expectedTournament,
@@ -312,9 +308,9 @@ func TestGetTournamentByTeamID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
-			resp, err := pc.GetTournamentByTeamID(context.Background(), tt.teamId)
+			resp, err := pc.GetTournamentByTeamID(context.Background(), tt.teamID)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -324,12 +320,11 @@ func TestGetTournamentByTeamID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -338,7 +333,7 @@ func TestGetTournamentByID(t *testing.T) {
 	tests := []struct {
 		name           string
 		statusCode     int
-		tournamentId   string
+		tournamentID   string
 		httpErr        error
 		responseBody   string
 		expectedResult Tournament
@@ -347,7 +342,7 @@ func TestGetTournamentByID(t *testing.T) {
 	}{
 		{
 			name:         "riot error",
-			tournamentId: "1",
+			tournamentID: "1",
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
 			wantErr:      true,
@@ -355,7 +350,7 @@ func TestGetTournamentByID(t *testing.T) {
 		},
 		{
 			name:         "unmatched json",
-			tournamentId: "1",
+			tournamentID: "1",
 			statusCode:   http.StatusOK,
 			responseBody: `["shouldbeobject"]`,
 			wantErr:      true,
@@ -363,7 +358,7 @@ func TestGetTournamentByID(t *testing.T) {
 		},
 		{
 			name:           "success",
-			tournamentId:   "1",
+			tournamentID:   "1",
 			statusCode:     http.StatusOK,
 			responseBody:   tournamentJSON,
 			expectedResult: expectedTournament,
@@ -374,9 +369,9 @@ func TestGetTournamentByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-			baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 			pc := NewPlatformClient(baseClient)
-			resp, err := pc.GetTournamentByID(context.Background(), tt.tournamentId)
+			resp, err := pc.GetTournamentByID(context.Background(), tt.tournamentID)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -386,12 +381,11 @@ func TestGetTournamentByID(t *testing.T) {
 					assert.ErrorAs(t, err, &rErr)
 					assert.Equal(t, tt.statusCode, rErr.StatusCode)
 				}
-
 				return
 			}
 
 			require.Nil(t, err)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

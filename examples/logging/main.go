@@ -36,7 +36,7 @@ func main() {
 		// error expected due to cancelled context
 	}
 
-	if _, err := client.Lol.Champion.GetRotation(ctx, options.WithApiMethod("OverrideDefaultLogMethod")); err != nil {
+	if _, err := client.Lol.Champion.GetRotation(ctx, options.WithAPIMethod("OverrideDefaultLogMethod")); err != nil {
 		// error expected due to cancelled context
 	}
 

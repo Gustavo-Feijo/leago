@@ -16,49 +16,6 @@ import (
 )
 
 var (
-	currentGameJSON = `{
-		"gameId": 123456789,
-		"gameType": "MATCHED_GAME",
-		"gameStartTime": 1700000000000,
-		"mapId": 11,
-		"gameLength": 600,
-		"platformId": "BR1",
-		"gameMode": "CLASSIC",
-		"gameQueueConfigId": 420,
-		"bannedChampions": [
-			{
-				"pickTurn": 1,
-				"championId": 157,
-				"teamId": 100
-			}
-		],
-		"observers": {
-			"encryptionKey": "test-encryption-key"
-		},
-		"participants": [
-			{
-				"championId": 157,
-				"perks": {
-					"perkIds": [8005, 9111],
-					"perkStyle": 8000,
-					"perkSubStyle": 8100
-				},
-				"profileIconId": 1234,
-				"bot": false,
-				"teamId": 100,
-				"puuid": "test-puuid",
-				"spell1Id": 4,
-				"spell2Id": 14,
-				"gameCustomizationObjects": [
-					{
-						"category": "championSkin",
-						"content": "skin-id-1"
-					}
-				]
-			}
-		]
-	}`
-
 	expectedCurrentGame = CurrentGameInfo{
 		GameID:            123456789,
 		GameType:          "MATCHED_GAME",
@@ -101,11 +58,54 @@ var (
 			},
 		},
 	}
+
+	currentGameJSON = `{
+		"gameId": 123456789,
+		"gameType": "MATCHED_GAME",
+		"gameStartTime": 1700000000000,
+		"mapId": 11,
+		"gameLength": 600,
+		"platformId": "BR1",
+		"gameMode": "CLASSIC",
+		"gameQueueConfigId": 420,
+		"bannedChampions": [
+			{
+				"pickTurn": 1,
+				"championId": 157,
+				"teamId": 100
+			}
+		],
+		"observers": {
+			"encryptionKey": "test-encryption-key"
+		},
+		"participants": [
+			{
+				"championId": 157,
+				"perks": {
+					"perkIds": [8005, 9111],
+					"perkStyle": 8000,
+					"perkSubStyle": 8100
+				},
+				"profileIconId": 1234,
+				"bot": false,
+				"teamId": 100,
+				"puuid": "test-puuid",
+				"spell1Id": 4,
+				"spell2Id": 14,
+				"gameCustomizationObjects": [
+					{
+						"category": "championSkin",
+						"content": "skin-id-1"
+					}
+				]
+			}
+		]
+	}`
 )
 
 func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	return NewPlatformClient(baseClient)
 }
 

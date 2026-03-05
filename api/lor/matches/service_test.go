@@ -17,10 +17,43 @@ import (
 )
 
 var (
-	matchListJSON     = `["matchTest1","matchTest2"]`
 	expectedMatchList = []string{
 		"matchTest1",
 		"matchTest2",
+	}
+
+	matchListJSON = `["matchTest1","matchTest2"]`
+
+	expectedMatch = Match{
+		Metadata: Metadata{
+			DataVersion:  "2",
+			MatchID:      "testID",
+			Participants: []string{"testpuuid"},
+		},
+		Info: Info{
+			GameMode:         GameModeThePathOfChampions,
+			GameType:         GameType(""),
+			GameStartTimeUTC: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+			GameVersion:      "live-green-6-07-3",
+			GameFormat:       GameFormatStandard,
+			Players: []Player{
+				{
+					PUUID:    "testpuuid",
+					DeckID:   "",
+					DeckCode: "",
+					Factions: []string{
+						"faction_BandleCity_Name",
+						"faction_Bard_Name",
+						"faction_Demacia_Name",
+						"faction_Freljord_Name",
+						"faction_MtTargon_Name",
+					},
+					GameOutcome: "win",
+					OrderOfPlay: 1,
+				},
+			},
+			TotalTurnCount: 19,
+		},
 	}
 
 	matchJSON = `{
@@ -56,42 +89,11 @@ var (
         "total_turn_count": 19
     }
 }`
-	expectedMatch = Match{
-		Metadata: Metadata{
-			DataVersion:  "2",
-			MatchID:      "testID",
-			Participants: []string{"testpuuid"},
-		},
-		Info: Info{
-			GameMode:         GameModeThePathOfChampions,
-			GameType:         GameType(""),
-			GameStartTimeUTC: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
-			GameVersion:      "live-green-6-07-3",
-			GameFormat:       GameFormatStandard,
-			Players: []Player{
-				{
-					PUUID:    "testpuuid",
-					DeckID:   "",
-					DeckCode: "",
-					Factions: []string{
-						"faction_BandleCity_Name",
-						"faction_Bard_Name",
-						"faction_Demacia_Name",
-						"faction_Freljord_Name",
-						"faction_MtTargon_Name",
-					},
-					GameOutcome: "win",
-					OrderOfPlay: 1,
-				},
-			},
-			TotalTurnCount: 19,
-		},
-	}
 )
 
 func newTestRegionClient(statusCode int, responseBody string, httpErr error) *RegionClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
 	return NewRegionClient(baseClient)
 }
 
@@ -148,8 +150,7 @@ func TestGetMatchesByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-			assert.Equal(t, resp, tt.expectedResult)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
@@ -210,10 +211,10 @@ func TestGetMatchByID(t *testing.T) {
 			require.NotNil(t, resp)
 
 			// Marshal both to not run into timezone problems.
-			expectedJson, _ := json.Marshal(tt.expectedResult)
+			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
-			assert.Equal(t, expectedJson, jsonResp)
+			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}
 }

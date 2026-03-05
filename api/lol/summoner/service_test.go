@@ -15,6 +15,13 @@ import (
 )
 
 var (
+	expectedSummoner = Summoner{
+		ProfileIconID: 15,
+		RevisionDate:  1772728809000,
+		Puuid:         "test-puuid",
+		SummonerLevel: 400,
+	}
+
 	summonerJSON = `{
    "profileIconId":15,
    "revisionDate":1772728809000,
@@ -22,18 +29,11 @@ var (
    "summonerLevel":400
 }
 	`
-
-	expectedSummoner = Summoner{
-		ProfileIconID: 15,
-		RevisionDate:  1772728809000,
-		Puuid:         "test-puuid",
-		SummonerLevel: 400,
-	}
 )
 
 func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHttpClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
 	return NewPlatformClient(baseClient)
 }
 
@@ -88,8 +88,6 @@ func TestGetSummonerByPUUID(t *testing.T) {
 			}
 
 			require.Nil(t, err)
-			require.NotNil(t, resp)
-
 			assert.Equal(t, expectedSummoner, resp)
 		})
 	}

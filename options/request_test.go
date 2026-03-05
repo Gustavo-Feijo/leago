@@ -12,10 +12,10 @@ import (
 func TestMergeOptions_Length(t *testing.T) {
 	merged := options.MergeOptions(
 		[]internal.RequestOption{
-			internal.WithApiMethod("Default"),
+			internal.WithAPIMethod("Default"),
 		},
 		[]options.PublicOption{
-			options.WithApiMethod("Override"),
+			options.WithAPIMethod("Override"),
 		},
 	)
 

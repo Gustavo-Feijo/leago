@@ -19,7 +19,7 @@ func (pc *PlatformClient) GetStatus(
 	endpoint := "/lol/status/v4/platform-data"
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithApiMethod(MethodGetStatus),
+		internal.WithAPIMethod(MethodGetStatus),
 	}
 
 	uri := pc.client.GetURL(endpoint)

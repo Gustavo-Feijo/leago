@@ -1,31 +1,26 @@
 package league
 
+// Entry for a given player on a given league.
+type Entry struct {
+	Puuid        string      `json:"puuid"`
+	LeagueID     string      `json:"leagueId,omitempty"`
+	QueueType    string      `json:"queueType"`
+	RatedTier    string      `json:"ratedTier,omitempty"`
+	RatedRating  int         `json:"ratedRating,omitempty"`
+	Tier         string      `json:"tier,omitempty"`
+	Rank         string      `json:"rank,omitempty"`
+	LeaguePoints int         `json:"leaguePoints,omitempty"`
+	Wins         int         `json:"wins"`
+	Losses       int         `json:"losses"`
+	HotStreak    bool        `json:"hotStreak,omitempty"`
+	Veteran      bool        `json:"veteran,omitempty"`
+	FreshBlood   bool        `json:"freshBlood,omitempty"`
+	Inactive     bool        `json:"inactive,omitempty"`
+	MiniSeries   *MiniSeries `json:"miniSeries,omitempty"`
+}
+
 type (
-	Entry struct {
-		Puuid        string      `json:"puuid"`
-		LeagueID     string      `json:"leagueId,omitempty"`
-		QueueType    string      `json:"queueType"`
-		RatedTier    string      `json:"ratedTier,omitempty"`
-		RatedRating  int         `json:"ratedRating,omitempty"`
-		Tier         string      `json:"tier,omitempty"`
-		Rank         string      `json:"rank,omitempty"`
-		LeaguePoints int         `json:"leaguePoints,omitempty"`
-		Wins         int         `json:"wins"`
-		Losses       int         `json:"losses"`
-		HotStreak    bool        `json:"hotStreak,omitempty"`
-		Veteran      bool        `json:"veteran,omitempty"`
-		FreshBlood   bool        `json:"freshBlood,omitempty"`
-		Inactive     bool        `json:"inactive,omitempty"`
-		MiniSeries   *MiniSeries `json:"miniSeries,omitempty"`
-	}
-
-	MiniSeries struct {
-		Losses   int    `json:"losses"`
-		Progress string `json:"progress"`
-		Target   int    `json:"target"`
-		Wins     int    `json:"wins"`
-	}
-
+	// Full league information.
 	List struct {
 		LeagueID string `json:"leagueId"`
 		Entries  []Item `json:"entries"`
@@ -46,15 +41,24 @@ type (
 		Losses       int         `json:"losses"`
 		Puuid        string      `json:"puuid"`
 	}
+)
 
-	RatedLadderEntry struct {
-		Puuid                        string     `json:"puuid"`
-		RatedTier                    LadderTier `json:"ratedTier"`
-		RatedRating                  int        `json:"ratedRating"`
-		Wins                         int        `json:"wins"`
-		PreviousUpdateLadderPosition int        `json:"wreviousUpdateLadderPosition"`
-	}
+type RatedLadderEntry struct {
+	Puuid                        string     `json:"puuid"`
+	RatedTier                    LadderTier `json:"ratedTier"`
+	RatedRating                  int        `json:"ratedRating"`
+	Wins                         int        `json:"wins"`
+	PreviousUpdateLadderPosition int        `json:"wreviousUpdateLadderPosition"`
+}
 
+type MiniSeries struct {
+	Losses   int    `json:"losses"`
+	Progress string `json:"progress"`
+	Target   int    `json:"target"`
+	Wins     int    `json:"wins"`
+}
+
+type (
 	Queue    string
 	Tier     string
 	Division string

@@ -22,32 +22,34 @@ type (
 		Inactive     bool        `json:"inactive"`
 		MiniSeries   *MiniSeries `json:"miniSeries,omitempty"`
 	}
+)
 
-	Entry struct {
-		LeagueID     string      `json:"leagueId"`
-		SummonerID   string      `json:"summonerId"`
-		PUUID        string      `json:"puuid"`
-		QueueType    string      `json:"queueType"`
-		Tier         string      `json:"tier"`
-		Rank         string      `json:"rank"`
-		LeaguePoints int         `json:"leaguePoints"`
-		Wins         int         `json:"wins"`
-		Losses       int         `json:"losses"`
-		HotStreak    bool        `json:"hotStreak"`
-		Veteran      bool        `json:"veteran"`
-		FreshBlood   bool        `json:"freshBlood"`
-		Inactive     bool        `json:"inactive"`
-		MiniSeries   *MiniSeries `json:"miniSeries,omitempty"`
-	}
+type Entry struct {
+	LeagueID     string      `json:"leagueId"`
+	SummonerID   string      `json:"summonerId"`
+	PUUID        string      `json:"puuid"`
+	QueueType    string      `json:"queueType"`
+	Tier         string      `json:"tier"`
+	Rank         string      `json:"rank"`
+	LeaguePoints int         `json:"leaguePoints"`
+	Wins         int         `json:"wins"`
+	Losses       int         `json:"losses"`
+	HotStreak    bool        `json:"hotStreak"`
+	Veteran      bool        `json:"veteran"`
+	FreshBlood   bool        `json:"freshBlood"`
+	Inactive     bool        `json:"inactive"`
+	MiniSeries   *MiniSeries `json:"miniSeries,omitempty"`
+}
 
-	MiniSeries struct {
-		Losses   int    `json:"losses"`
-		Progress string `json:"progress"`
-		Target   int    `json:"target"`
-		Wins     int    `json:"wins"`
-	}
+type MiniSeries struct {
+	Losses   int    `json:"losses"`
+	Progress string `json:"progress"`
+	Target   int    `json:"target"`
+	Wins     int    `json:"wins"`
+}
 
-	Queue    string
+type (
+	Queue    string // Which queue the league entry comes from.
 	Tier     string
 	Division string
 )
