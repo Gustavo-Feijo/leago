@@ -7,6 +7,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/api/lol"
 	"github.com/Gustavo-Feijo/leago/api/lor"
 	"github.com/Gustavo-Feijo/leago/api/riot"
+	"github.com/Gustavo-Feijo/leago/api/tft"
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/regions"
 )
@@ -32,6 +33,7 @@ type (
 	PlatformClient struct {
 		*baseClient
 		Lol *lol.PlatformClient
+		Tft *tft.PlatformClient
 	}
 )
 
@@ -63,6 +65,7 @@ func NewPlatformClient(platform regions.Platform, apiKey string, opts ...Option)
 	}
 
 	pc.Lol = lol.NewPlatformClient(pc.client, pc.logger, platform, apiKey)
+	pc.Tft = tft.NewPlatformClient(pc.client, pc.logger, platform, apiKey)
 
 	return pc
 }

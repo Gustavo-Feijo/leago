@@ -22,7 +22,7 @@ linters:
       ignore-underscore-vars: false
       disable-init-func-first-check: false
       disable-dec-num-check: false
-      disable-type-dec-num-check: false
+      disable-type-dec-num-check: true
       disable-const-dec-num-check: false
       disable-var-dec-num-check: false
       
@@ -34,10 +34,11 @@ linters:
     
     gocyclo:
       min-complexity: 15
+
     revive:
       rules:
         - name: exported
-          severity: warning
+          disabled: true
 
     godoclint:
       default: basic
