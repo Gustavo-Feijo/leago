@@ -9,6 +9,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/api/lol/clash"
 	"github.com/Gustavo-Feijo/leago/api/lol/league"
 	"github.com/Gustavo-Feijo/leago/api/lol/leagueexp"
+	"github.com/Gustavo-Feijo/leago/api/lol/spectator"
 	"github.com/Gustavo-Feijo/leago/api/lol/status"
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/regions"
@@ -21,6 +22,7 @@ type PlatformClient struct {
 	Clash           *clash.PlatformClient
 	League          *league.PlatformClient
 	LeagueExp       *leagueexp.PlatformClient
+	Spectator       *spectator.PlatformClient
 	Status          *status.PlatformClient
 }
 
@@ -33,6 +35,7 @@ func NewPlatformClient(client internal.Doer, logger *slog.Logger, region regions
 		Clash:           clash.NewPlatformClient(baseClient),
 		League:          league.NewPlatformClient(baseClient),
 		LeagueExp:       leagueexp.NewPlatformClient(baseClient),
+		Spectator:       spectator.NewPlatformClient(baseClient),
 		Status:          status.NewPlatformClient(baseClient),
 	}
 	return c
