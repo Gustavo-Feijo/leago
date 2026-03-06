@@ -20,22 +20,23 @@ type (
 	}
 
 	Option func(*baseClient)
-
-	// RegionClient provides access to all region related APIs.
-	RegionClient struct {
-		*baseClient
-		Riot *riot.RegionClient
-		Lor  *lor.RegionClient
-		Lol  *lol.RegionClient
-	}
-
-	// PlatformClient provides access to all platform related APIs.
-	PlatformClient struct {
-		*baseClient
-		Lol *lol.PlatformClient
-		Tft *tft.PlatformClient
-	}
 )
+
+// RegionClient provides access to all region related APIs.
+type RegionClient struct {
+	*baseClient
+	Riot *riot.RegionClient
+	Lor  *lor.RegionClient
+	Lol  *lol.RegionClient
+	Tft  *tft.RegionClient
+}
+
+// PlatformClient provides access to all platform related APIs.
+type PlatformClient struct {
+	*baseClient
+	Lol *lol.PlatformClient
+	Tft *tft.PlatformClient
+}
 
 // NewRegionClient returns a new client with access to the region specific APIs.
 func NewRegionClient(region regions.Region, apiKey string, opts ...Option) *RegionClient {
@@ -50,6 +51,7 @@ func NewRegionClient(region regions.Region, apiKey string, opts ...Option) *Regi
 	rc.Riot = riot.NewRegionClient(rc.client, rc.logger, region, apiKey)
 	rc.Lor = lor.NewRegionClient(rc.client, rc.logger, region, apiKey)
 	rc.Lol = lol.NewRegionClient(rc.client, rc.logger, region, apiKey)
+	rc.Tft = tft.NewRegionClient(rc.client, rc.logger, region, apiKey)
 
 	return rc
 }
