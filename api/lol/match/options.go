@@ -1,4 +1,4 @@
-package matches
+package match
 
 import (
 	"strconv"

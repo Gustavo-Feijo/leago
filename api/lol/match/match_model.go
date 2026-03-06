@@ -1,4 +1,4 @@
-package matches
+package match
 
 // Separate file for those models due to their size.
 type (

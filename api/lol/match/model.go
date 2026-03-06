@@ -1,4 +1,4 @@
-package matches
+package match
 
 type (
 	// Timeline and match types are separated in their own files due to their size.

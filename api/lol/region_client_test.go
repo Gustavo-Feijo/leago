@@ -14,5 +14,5 @@ func TestNewRegionClient(t *testing.T) {
 	client := NewRegionClient(http.DefaultClient, slog.Default(), regions.RegionAmericas, "apiKey")
 	require.NotNil(t, client)
 
-	require.NotNil(t, client.Matches)
+	require.NotNil(t, client.Match)
 }
