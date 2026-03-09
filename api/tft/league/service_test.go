@@ -99,55 +99,83 @@ var (
 	}
 )
 
-func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
+func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-	return NewPlatformClient(baseClient)
+	return NewPlatformClient(baseClient), mockDoer
 }
 
 func TestGetMasterLeague(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		opts []UpperLeagueOption
+
+		statusCode   int
+		responseBody string
+
+		expectedPath  string
+		expectedQuery map[string]string
+
 		expectedResult List
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
+			name: "riot error",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
+			name: "invalid json",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json}`,
-			wantErr:      true,
+
+			wantErr: true,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   listJSON,
+			name: "success no filter",
+
+			statusCode:   http.StatusOK,
+			responseBody: listJSON,
+
+			expectedPath: "/tft/league/v1/master",
+
+			expectedResult: expectedList,
+		},
+		{
+			name: "success with filter",
+
+			opts: []UpperLeagueOption{WithQueueHighElo(QueueRankedTFT)},
+
+			statusCode:   http.StatusOK,
+			responseBody: listJSON,
+
+			expectedPath: "/tft/league/v1/master",
+			expectedQuery: map[string]string{
+				"queue": "RANKED_TFT",
+			},
+
 			expectedResult: expectedList,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
+			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
 			resp, err := pc.GetMasterLeague(
 				context.Background(),
-				[]UpperLeagueOption{
-					WithQueueHighElo(QueueRankedTFT),
-				},
+				tt.opts,
 			)
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
@@ -157,7 +185,14 @@ func TestGetMasterLeague(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+
+			query := mockDoer.CapturedReq.URL.Query()
+			for k, v := range tt.expectedQuery {
+				assert.Equal(t, v, query.Get(k))
+			}
 
 			assert.Equal(t, tt.expectedResult, resp)
 		})
@@ -166,337 +201,183 @@ func TestGetMasterLeague(t *testing.T) {
 
 func TestGetGrandmasterLeague(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		opts         []UpperLeagueOption
+		statusCode   int
+		responseBody string
+
+		expectedPath  string
+		expectedQuery map[string]string
+
 		expectedResult List
-		wantErr        bool
-		wantRiotErr    bool
 	}{
 		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
+			name: "without filter",
+
 			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json}`,
-			wantErr:      true,
+			responseBody: listJSON,
+
+			expectedPath: "/tft/league/v1/grandmaster",
+
+			expectedResult: expectedList,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   listJSON,
+			name: "with filter",
+
+			opts: []UpperLeagueOption{WithQueueHighElo(QueueRankedTFTDoubleUP)},
+
+			statusCode:   http.StatusOK,
+			responseBody: listJSON,
+
+			expectedPath: "/tft/league/v1/grandmaster",
+			expectedQuery: map[string]string{
+				"queue": "RANKED_TFT_DOUBLE_UP",
+			},
+
 			expectedResult: expectedList,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetGrandmasterLeague(context.Background(), nil)
+			pc, mockDoer := newTestPlatformClient(http.StatusOK, tt.responseBody)
+			resp, err := pc.GetGrandmasterLeague(
+				context.Background(),
+				tt.opts,
+			)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
+			require.NoError(t, err)
 
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+
+			query := mockDoer.CapturedReq.URL.Query()
+			for k, v := range tt.expectedQuery {
+				assert.Equal(t, v, query.Get(k))
 			}
 
-			require.Nil(t, err)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
 
 func TestGetChallengerLeague(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult List
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json}`,
-			wantErr:      true,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   listJSON,
-			expectedResult: expectedList,
-		},
-	}
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, listJSON)
+	resp, err := pc.GetChallengerLeague(context.Background(), nil)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetChallengerLeague(context.Background(), nil)
+	require.NoError(t, err)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/tft/league/v1/challenger", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedList, resp)
 }
 
 func TestGetLeagueByID(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult List
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json}`,
-			wantErr:      true,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   listJSON,
-			expectedResult: expectedList,
-		},
-	}
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, listJSON)
+	resp, err := pc.GetLeagueByID(context.Background(), "123")
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetLeagueByID(context.Background(), "123")
+	require.NoError(t, err)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/tft/league/v1/leagues/123", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedList, resp)
 }
 
 func TestGetLeagueEntries(t *testing.T) {
-
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		tier     Tier
+		division Division
+		opts     []LeagueOption
+
+		responseBody string
+
+		expectedPath  string
+		expectedQuery map[string]string
+
 		expectedResult []Entry
-		wantErr        bool
-		wantRiotErr    bool
 	}{
 		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+			name: "no filters",
+
+			tier:     TierBronze,
+			division: DivisionIV,
+
+			responseBody: entriesJSON,
+
+			expectedPath: "/tft/league/v1/entries/BRONZE/IV",
+
+			expectedResult: expectedEntries,
 		},
 		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json}`,
-			wantErr:      true,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   entriesJSON,
+			name: "all filters",
+
+			tier:     TierDiamond,
+			division: DivisionI,
+			opts: []LeagueOption{
+				WithPage(1),
+				WithQueue(QueueRankedTFT),
+			},
+
+			responseBody: entriesJSON,
+
+			expectedPath: "/tft/league/v1/entries/DIAMOND/I",
+			expectedQuery: map[string]string{
+				"page":  "1",
+				"queue": "RANKED_TFT",
+			},
+
 			expectedResult: expectedEntries,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
+			pc, mockDoer := newTestPlatformClient(http.StatusOK, tt.responseBody)
 			resp, err := pc.GetLeagueEntries(
 				context.Background(),
-				TierDiamond,
-				DivisionI,
-				[]LeagueOption{
-					WithPage(1),
-					WithQueue(QueueRankedTFT),
-				},
+				tt.tier,
+				tt.division,
+				tt.opts,
 			)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
+			require.NoError(t, err)
 
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+
+			query := mockDoer.CapturedReq.URL.Query()
+			for k, v := range tt.expectedQuery {
+				assert.Equal(t, v, query.Get(k))
 			}
 
-			require.Nil(t, err)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
 
 func TestGetLeagueEntriesByPUUID(t *testing.T) {
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, entriesJSON)
 
-	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult []Entry
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json}`,
-			wantErr:      true,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   entriesJSON,
-			expectedResult: expectedEntries,
-		},
-	}
+	resp, err := pc.GetLeagueEntriesByPUUID(
+		context.Background(),
+		"testpuuid",
+	)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
+	require.NoError(t, err)
 
-			resp, err := pc.GetLeagueEntriesByPUUID(
-				context.Background(),
-				"testpuuid",
-			)
-
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/tft/league/v1/by-puuid/testpuuid", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedEntries, resp)
 }
 
 func TestGetRatedLadder(t *testing.T) {
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, ratedJSON)
 
-	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult []RatedLadderEntry
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json}`,
-			wantErr:      true,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   ratedJSON,
-			expectedResult: expectedRated,
-		},
-	}
+	resp, err := pc.GetRatedLadder(
+		context.Background(),
+		LadderQueueRankedTFTDoubleUP,
+	)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
+	require.NoError(t, err)
 
-			resp, err := pc.GetRatedLadder(
-				context.Background(),
-				LadderQueueRankedTFTDoubleUP,
-			)
-
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/tft/league/v1/rated-ladders/RANKED_TFT_DOUBLE_UP/top", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedRated, resp)
 }

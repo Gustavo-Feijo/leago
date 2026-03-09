@@ -17,12 +17,13 @@ func (m *Doer) Do(req *http.Request) (*http.Response, error) {
 	return m.Response, m.Err
 }
 
-func NewDefaultDoer(statusCode int, body string, err error) *Doer {
+// NewDefaultDoer returns a default Doer without http errors.
+func NewDefaultDoer(statusCode int, body string) *Doer {
 	return &Doer{
 		Response: &http.Response{
 			StatusCode: statusCode,
 			Body:       io.NopCloser(strings.NewReader(body)),
 		},
-		Err: err,
+		Err: nil,
 	}
 }

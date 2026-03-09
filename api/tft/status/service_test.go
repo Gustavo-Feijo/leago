@@ -114,52 +114,63 @@ var (
 }`
 )
 
-func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
+func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-	return NewPlatformClient(baseClient)
+	return NewPlatformClient(baseClient), mockDoer
 }
 
 func TestGetStatus(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		statusCode   int
+		responseBody string
+
+		expectedPath string
+
 		expectedResult ServiceStatus
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
+			name: "riot error",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
+			name: "invalid json",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   statusJSON,
+			name: "success",
+
+			statusCode:   http.StatusOK,
+			responseBody: statusJSON,
+
+			expectedPath: "/tft/status/v1/platform-data",
+
 			expectedResult: expectedStatus,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
+			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
 			resp, err := pc.GetStatus(context.Background())
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
@@ -170,7 +181,7 @@ func TestGetStatus(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
+			require.NoError(t, err)
 			require.NotNil(t, resp)
 
 			// Avoiding direct comparison of the returned due to timezones handling.
@@ -178,6 +189,7 @@ func TestGetStatus(t *testing.T) {
 			expectedJSON, _ := json.Marshal(tt.expectedResult)
 			jsonResp, _ := json.Marshal(resp)
 
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
 			assert.Equal(t, expectedJSON, jsonResp)
 		})
 	}

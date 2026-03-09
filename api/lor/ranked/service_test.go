@@ -2,7 +2,6 @@ package ranked
 
 import (
 	"context"
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"testing"
@@ -14,12 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func newTestRegionClient(statusCode int, responseBody string, httpErr error) *RegionClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
-	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
-	return NewRegionClient(baseClient)
-}
 
 var (
 	expectedLeaderboard = Leaderboard{
@@ -43,46 +36,63 @@ var (
 }`
 )
 
+func newTestRegionClient(statusCode int, responseBody string) (*RegionClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
+	return NewRegionClient(baseClient), mockDoer
+}
+
 func TestGetLeaderboard(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		statusCode   int
+		responseBody string
+
+		expectedPath string
+
 		expectedResult Leaderboard
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
+			name: "riot error",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
+			name: "invalid json",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   leaderboardJSON,
+			name: "success",
+
+			statusCode:   http.StatusOK,
+			responseBody: leaderboardJSON,
+
+			expectedPath: "/lor/ranked/v1/leaderboards",
+
 			expectedResult: expectedLeaderboard,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := newTestRegionClient(tt.statusCode, tt.responseBody, tt.httpErr)
+			rc, mockDoer := newTestRegionClient(tt.statusCode, tt.responseBody)
 			resp, err := rc.GetLeaderboards(context.Background())
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
 					assert.ErrorAs(t, err, &rErr)
@@ -91,14 +101,10 @@ func TestGetLeaderboard(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
-			require.NotNil(t, resp)
+			require.NoError(t, err)
 
-			// Marshal both to not run into timezone problems.
-			expectedJSON, _ := json.Marshal(tt.expectedResult)
-			jsonResp, _ := json.Marshal(resp)
-
-			assert.Equal(t, expectedJSON, jsonResp)
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

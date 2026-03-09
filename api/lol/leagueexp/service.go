@@ -20,7 +20,7 @@ func (pc *PlatformClient) GetLeague(
 	division Division,
 	endpointOpts []GetLeagueOption,
 	opts ...options.PublicOption,
-) (LeagueResponse, error) {
+) ([]Entry, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/league-exp/v4/entries/%s/%s/%s",
 		queue,
@@ -34,7 +34,7 @@ func (pc *PlatformClient) GetLeague(
 	)
 
 	uri := pc.client.GetURL(endpoint)
-	return internal.AuthRequest[LeagueResponse](
+	return internal.AuthRequest[[]Entry](
 		ctx,
 		pc.client,
 		uri,

@@ -42,78 +42,102 @@ func newTestClient(doer *mock.Doer) *Client {
 
 func TestAuthRequest(t *testing.T) {
 	tests := []struct {
-		name           string
-		url            string
+		name string
+
+		url     string
+		reqOpts []RequestOption
+
 		httpStatusCode int
 		httpBody       io.ReadCloser
 		httpErr        error
-		reqOpts        []RequestOption
+
 		wantName       string
 		wantTokenParam string
 		wantErr        bool
 		wantRiotErr    bool
 	}{
 		{
-			name:    "invalid URI",
-			url:     "http://[::1",
+			name: "invalid URI",
+
+			url: "http://[::1",
+
 			wantErr: true,
 		},
 		{
 			name: "invalid request",
-			url:  "http://testexample.com",
+
+			url: "http://testexample.com",
 			reqOpts: []RequestOption{
 				WithHTTPMethod("invalid::{}"), // http.NewRequestWithContext validates the method tokens.
 			},
+
 			wantErr: true,
 		},
 		{
 			name: "invalid post request body",
-			url:  "http://testexample.com",
+
+			url: "http://testexample.com",
 			reqOpts: []RequestOption{
 				WithHTTPMethod(http.MethodPost),
 				WithBody(make(chan int)), // json.Marshal will fail with channels.
 			},
+
 			wantErr: true,
 		},
 		{
-			name:    "request failed",
-			url:     "http://testexample.com",
+			name: "request failed",
+
+			url: "http://testexample.com",
+
 			httpErr: &http.MaxBytesError{},
+
 			wantErr: true,
 		},
 		{
-			name:     "io reader failed",
-			url:      "http://testexample.com",
+			name: "io reader failed",
+
+			url: "http://testexample.com",
+
 			httpBody: io.NopCloser(errorReader{}),
-			wantErr:  true,
+
+			wantErr: true,
 		},
 		{
-			name:           "non ok http status code",
-			url:            "http://testexample.com",
+			name: "non ok http status code",
+
+			url: "http://testexample.com",
+
 			httpStatusCode: 400,
 			httpBody:       io.NopCloser(strings.NewReader("Error")),
-			wantErr:        true,
-			wantRiotErr:    true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:           "json unmarshal error",
-			url:            "http://testexample.com",
+			name: "json unmarshal error",
+
+			url: "http://testexample.com",
+
 			httpStatusCode: 200,
 			httpBody:       io.NopCloser(strings.NewReader("invalid json")),
-			wantErr:        true,
-			wantRiotErr:    false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
+			name: "success",
+
 			url:            "http://testexample.com",
 			httpStatusCode: 200,
-			httpBody:       io.NopCloser(strings.NewReader(`{"name":"valid name"}`)),
-			wantName:       "valid name",
+
+			httpBody: io.NopCloser(strings.NewReader(`{"name":"valid name"}`)),
+
+			wantName: "valid name",
 		},
 		{
-			name:           "success post request",
-			url:            "http://testexample.com",
-			httpStatusCode: 204,
+			name: "success post request",
+
+			url: "http://testexample.com",
 			reqOpts: []RequestOption{
 				WithHTTPMethod(http.MethodPost),
 				WithBody(PostRequest{
@@ -121,24 +145,29 @@ func TestAuthRequest(t *testing.T) {
 				}),
 				WithAPIMethod("Test.Create"),
 			},
-			httpBody: io.NopCloser(strings.NewReader(`{"name":"posttest"}`)),
+
+			httpStatusCode: 204,
+			httpBody:       io.NopCloser(strings.NewReader(`{"name":"posttest"}`)),
+
 			wantName: "posttest",
 		},
 		{
-			name:           "success with params",
-			url:            "http://testexample.com",
-			httpStatusCode: 200,
-			httpBody:       io.NopCloser(strings.NewReader(`{"name":"valid name"}`)),
-			wantName:       "valid name",
+			name: "success with params",
 
-			// Token can also be as param.
-			wantTokenParam: "validKey",
+			url: "http://testexample.com",
 			reqOpts: []RequestOption{
 				// Override.
 				WithParam(apiTokenHeader, "validKey1"),
 				WithParams(map[string]string{apiTokenHeader: "invalidKey"}),
 				WithParam(apiTokenHeader, "validKey"),
 			},
+
+			httpStatusCode: 200,
+			httpBody:       io.NopCloser(strings.NewReader(`{"name":"valid name"}`)),
+
+			wantName: "valid name",
+			// Token can also be as param.
+			wantTokenParam: "validKey",
 		},
 	}
 
@@ -157,7 +186,7 @@ func TestAuthRequest(t *testing.T) {
 			got, err := AuthRequest[Response](context.Background(), client, tt.url, tt.reqOpts...)
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *RiotError
@@ -168,7 +197,7 @@ func TestAuthRequest(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
+			require.NoError(t, err)
 
 			if tt.wantTokenParam != "" {
 				assert.Equal(t, tt.wantTokenParam, mockDoer.CapturedReq.URL.Query().Get(apiTokenHeader))

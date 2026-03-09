@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strconv"
 	"testing"
 
 	"github.com/Gustavo-Feijo/leago/internal"
@@ -77,54 +76,75 @@ var (
 	masteriesJSON     = fmt.Sprintf("[%s]", masteryJSON)
 )
 
+func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
+	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	return NewPlatformClient(baseClient), mockDoer
+}
+
 func TestGetByPUUID(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		puuid          string
-		httpErr        error
-		responseBody   string
+		name string
+
+		puuid string
+
+		statusCode   int
+		responseBody string
+
+		expectedPath string
+
 		expectedResult []Mastery
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
-			puuid:        "test-puuid",
+			name: "riot error",
+
+			puuid: "nonexistentpuuid",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			expectedPath: "/lol/champion-mastery/v4/champion-masteries/by-puuid/nonexistentpuuid",
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
-			puuid:        "test-puuid",
+			name: "invalid json",
+
+			puuid: "test-puuid",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			expectedPath: "/lol/champion-mastery/v4/champion-masteries/by-puuid/test-puuid",
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			puuid:          "test-puuid",
-			statusCode:     http.StatusOK,
-			responseBody:   masteriesJSON,
+			name: "success",
+
+			puuid: "test-puuid",
+
+			statusCode:   http.StatusOK,
+			responseBody: masteriesJSON,
+
+			expectedPath: "/lol/champion-mastery/v4/champion-masteries/by-puuid/test-puuid",
+
 			expectedResult: expectedMasteries,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
-
-			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-			pc := NewPlatformClient(baseClient)
-
+			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
 			resp, err := pc.GetByPUUID(context.Background(), tt.puuid)
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
@@ -134,7 +154,9 @@ func TestGetByPUUID(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
@@ -142,201 +164,84 @@ func TestGetByPUUID(t *testing.T) {
 
 func TestGetByPUUIDTop(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		puuid          string
-		httpErr        error
-		responseBody   string
+		name string
+
+		puuid string
+		opts  []GetByPUUIDTopOption
+
+		responseBody string
+
+		expectedPath  string
+		expectedQuery map[string]string
+
 		expectedResult []Mastery
-		wantErr        bool
-		wantRiotErr    bool
 	}{
 		{
-			name:         "riot error",
-			puuid:        "test-puuid",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			puuid:        "test-puuid",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			puuid:          "test-puuid",
-			statusCode:     http.StatusOK,
-			responseBody:   masteriesJSON,
+			name: "no filters",
+
+			puuid: "test-puuid",
+
+			responseBody: masteriesJSON,
+
+			expectedPath: "/lol/champion-mastery/v4/champion-masteries/by-puuid/test-puuid/top",
+
 			expectedResult: expectedMasteries,
-			wantErr:        false,
+		},
+		{
+			name: "with count",
+
+			puuid: "test-puuid",
+
+			opts: []GetByPUUIDTopOption{
+				WithCount(5),
+			},
+
+			responseBody: masteriesJSON,
+
+			expectedPath: "/lol/champion-mastery/v4/champion-masteries/by-puuid/test-puuid/top",
+			expectedQuery: map[string]string{
+				"count": "5",
+			},
+
+			expectedResult: expectedMasteries,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
+			pc, mockDoer := newTestPlatformClient(http.StatusOK, tt.responseBody)
+			resp, err := pc.GetByPUUIDTop(context.Background(), tt.puuid, tt.opts)
 
-			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-			pc := NewPlatformClient(baseClient)
+			require.NoError(t, err)
 
-			defaultCount := 5
-			resp, err := pc.GetByPUUIDTop(context.Background(), tt.puuid, []GetByPUUIDTopOption{WithCount(defaultCount)})
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
+			query := mockDoer.CapturedReq.URL.Query()
+			for k, v := range tt.expectedQuery {
+				assert.Equal(t, v, query.Get(k))
 			}
 
-			require.Nil(t, err)
-
-			countParam := mockDoer.CapturedReq.URL.Query().Get("count")
-			val, paramErr := strconv.ParseInt(countParam, 10, 0)
-			assert.Nil(t, paramErr)
-
-			assert.Equal(t, defaultCount, int(val))
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
 
 func TestGetByPUUIDByChampion(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		puuid          string
-		championID     int64
-		httpErr        error
-		responseBody   string
-		expectedResult Mastery
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			puuid:        "test-puuid",
-			championID:   12,
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			puuid:        "test-puuid",
-			championID:   125,
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			puuid:          "test-puuid",
-			championID:     266,
-			statusCode:     http.StatusOK,
-			responseBody:   masteryJSON,
-			expectedResult: expectedMastery,
-			wantErr:        false,
-		},
-	}
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, masteryJSON)
+	resp, err := pc.GetByPUUIDByChampion(context.Background(), "test-puuid", 266)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
+	require.NoError(t, err)
 
-			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-			pc := NewPlatformClient(baseClient)
-
-			resp, err := pc.GetByPUUIDByChampion(context.Background(), tt.puuid, tt.championID)
-
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/lol/champion-mastery/v4/champion-masteries/by-puuid/test-puuid/by-champion/266", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedMastery, resp)
 }
 
 func TestGetScoreByPUUID(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		puuid          string
-		httpErr        error
-		responseBody   string
-		expectedResult MasteryScore
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			puuid:        "test-puuid",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			puuid:        "test-puuid",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			puuid:          "test-puuid",
-			statusCode:     http.StatusOK,
-			responseBody:   "15",
-			expectedResult: 15,
-			wantErr:        false,
-		},
-	}
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, "15")
+	resp, err := pc.GetScoreByPUUID(context.Background(), "test-puuid")
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockDoer := mock.NewDefaultDoer(tt.statusCode, tt.responseBody, tt.httpErr)
+	require.NoError(t, err)
 
-			baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-			pc := NewPlatformClient(baseClient)
-
-			resp, err := pc.GetScoreByPUUID(context.Background(), tt.puuid)
-
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/lol/champion-mastery/v4/scores/by-puuid/test-puuid", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, MasteryScore(15), resp)
 }

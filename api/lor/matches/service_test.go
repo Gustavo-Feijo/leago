@@ -91,56 +91,71 @@ var (
 }`
 )
 
-func newTestRegionClient(statusCode int, responseBody string, httpErr error) *RegionClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
+func newTestRegionClient(statusCode int, responseBody string) (*RegionClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
-	return NewRegionClient(baseClient)
+	return NewRegionClient(baseClient), mockDoer
 }
 
 func TestGetMatchesByPUUID(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		puuid          string
-		httpErr        error
-		responseBody   string
+		name string
+
+		puuid string
+
+		statusCode   int
+		responseBody string
+
+		expectedPath string
+
 		expectedResult []string
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
-			puuid:        "test-puuid",
+			name: "riot error",
+
+			puuid: "nonexistentpuuid",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
-			puuid:        "test-puuid",
+			name: "invalid json",
+
+			puuid: "badjsonpuuid",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			puuid:          "test-puuid",
-			statusCode:     http.StatusOK,
-			responseBody:   matchListJSON,
+			name: "success",
+
+			puuid: "testpuuid",
+
+			statusCode:   http.StatusOK,
+			responseBody: matchListJSON,
+
+			expectedPath: "/lor/match/v1/matches/by-puuid/testpuuid/ids",
+
 			expectedResult: expectedMatchList,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := newTestRegionClient(tt.statusCode, tt.responseBody, tt.httpErr)
+			rc, mockDoer := newTestRegionClient(tt.statusCode, tt.responseBody)
 			resp, err := rc.GetMatchesByPUUID(context.Background(), tt.puuid)
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
 					assert.ErrorAs(t, err, &rErr)
@@ -149,72 +164,25 @@ func TestGetMatchesByPUUID(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
 
 func TestGetMatchByID(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		matchID        string
-		httpErr        error
-		responseBody   string
-		expectedResult Match
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			matchID:      "test-matchidnotfound",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			matchID:      "test-matchid",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			matchID:        "test-matchid",
-			statusCode:     http.StatusOK,
-			responseBody:   matchJSON,
-			expectedResult: expectedMatch,
-			wantErr:        false,
-		},
-	}
+	rc, mockDoer := newTestRegionClient(http.StatusOK, matchJSON)
+	resp, err := rc.GetMatchByID(context.Background(), "testmatchid")
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			rc := newTestRegionClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := rc.GetMatchByID(context.Background(), tt.matchID)
+	require.NoError(t, err)
+	require.NotNil(t, resp)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
+	// Marshal both to not run into timezone problems.
+	expectedJSON, _ := json.Marshal(expectedMatch)
+	jsonResp, _ := json.Marshal(resp)
 
-			require.Nil(t, err)
-			require.NotNil(t, resp)
-
-			// Marshal both to not run into timezone problems.
-			expectedJSON, _ := json.Marshal(tt.expectedResult)
-			jsonResp, _ := json.Marshal(resp)
-
-			assert.Equal(t, expectedJSON, jsonResp)
-		})
-	}
+	assert.Equal(t, "/lor/match/v1/matches/testmatchid", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedJSON, jsonResp)
 }

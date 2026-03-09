@@ -122,52 +122,61 @@ var (
 	}`
 )
 
-func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
+func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-	return NewPlatformClient(baseClient)
+	return NewPlatformClient(baseClient), mockDoer
 }
+
+// All service calls are coupled to AuthRequest, a single test will handled the error cases, since it's basically testing how it handles the return from there.
 
 func TestGetConfig(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		statusCode   int
+		responseBody string
+
 		expectedResult []ConfigInfo
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
+			name: "riot error",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
+			name: "invalid json",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   configListJSON,
+			name: "success",
+
+			statusCode:   http.StatusOK,
+			responseBody: configListJSON,
+
 			expectedResult: expectedConfigList,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
+			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
 			resp, err := pc.GetConfig(context.Background())
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
@@ -177,7 +186,9 @@ func TestGetConfig(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
+			require.NoError(t, err)
+
+			assert.Equal(t, "/lol/challenges/v1/challenges/config", mockDoer.CapturedReq.URL.Path)
 			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
@@ -185,275 +196,158 @@ func TestGetConfig(t *testing.T) {
 
 func TestGetConfigByID(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult ConfigInfo
-		wantErr        bool
-		wantRiotErr    bool
+		name string
+
+		challengeID int64
+
+		expectedPath string
 	}{
 		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+			name: "single digit id",
+
+			challengeID: 1,
+
+			expectedPath: "/lol/challenges/v1/challenges/1/config",
 		},
 		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   configInfoJSON,
-			expectedResult: expectedConfigInfo,
-			wantErr:        false,
+			name: "large id",
+
+			challengeID: 123456789,
+
+			expectedPath: "/lol/challenges/v1/challenges/123456789/config",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetConfigByID(context.Background(), 1)
+			pc, mockDoer := newTestPlatformClient(http.StatusOK, configInfoJSON)
+			resp, err := pc.GetConfigByID(context.Background(), tt.challengeID)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
+			require.NoError(t, err)
 
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+			assert.Equal(t, expectedConfigInfo, resp)
 		})
 	}
 }
 
 func TestGetLeaderboardByChallengeIDByLevel(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult Leaderboard
-		wantErr        bool
-		wantRiotErr    bool
+		name string
+
+		challengeID int64
+		level       TopLevel
+		opts        []GetLeaderboardOption
+
+		expectedPath     string
+		expectedRawQuery string
 	}{
 		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+			name: "no options",
+
+			challengeID: 1,
+			level:       TopLevelMaster,
+			opts:        []GetLeaderboardOption{},
+
+			expectedPath: "/lol/challenges/v1/challenges/1/leaderboards/by-level/MASTER",
 		},
 		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+			name: "with limit",
+
+			challengeID: 1,
+			level:       TopLevelMaster,
+			opts:        []GetLeaderboardOption{WithLimit(5)},
+
+			expectedPath:     "/lol/challenges/v1/challenges/1/leaderboards/by-level/MASTER",
+			expectedRawQuery: "limit=5",
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   leaderboardJSON,
-			expectedResult: expectedLeaderboard,
-			wantErr:        false,
+			name: "grandmaster level",
+
+			challengeID: 99,
+			level:       TopLevelGrandmaster,
+			opts:        []GetLeaderboardOption{},
+
+			expectedPath: "/lol/challenges/v1/challenges/99/leaderboards/by-level/GRANDMASTER",
+		},
+		{
+			name: "challenger level",
+
+			challengeID: 99,
+			level:       TopLevelChallenger,
+			opts:        []GetLeaderboardOption{},
+
+			expectedPath: "/lol/challenges/v1/challenges/99/leaderboards/by-level/CHALLENGER",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetLeaderboardByChallengeIDByLevel(context.Background(), 1, TopLevelMaster, []GetLeaderboardOption{WithLimit(5)})
+			pc, mockDoer := newTestPlatformClient(http.StatusOK, leaderboardJSON)
+			resp, err := pc.GetLeaderboardByChallengeIDByLevel(context.Background(), tt.challengeID, tt.level, tt.opts)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
+			require.NoError(t, err)
 
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+			assert.Equal(t, tt.expectedRawQuery, mockDoer.CapturedReq.URL.RawQuery)
+			assert.Equal(t, expectedLeaderboard, resp)
 		})
 	}
 }
 
 func TestGetPercentiles(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult PercentileMap
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   percentileMapJSON,
-			expectedResult: expectedPercentileMap,
-			wantErr:        false,
-		},
-	}
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, percentileMapJSON)
+	resp, err := pc.GetPercentiles(context.Background())
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetPercentiles(context.Background())
+	require.NoError(t, err)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/lol/challenges/v1/challenges/percentiles", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedPercentileMap, resp)
 }
 
 func TestGetPercentilesByChallengeID(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult LevelPercentiles
-		wantErr        bool
-		wantRiotErr    bool
+		name string
+
+		challengeID int64
+
+		expectedPath string
 	}{
 		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+			name: "firstidtest",
+
+			challengeID: 1,
+
+			expectedPath: "/lol/challenges/v1/challenges/1/percentiles",
 		},
 		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   levelPercentilesJSON,
-			expectedResult: expectedLevelPercentiles,
-			wantErr:        false,
+			name: "secondidtest",
+
+			challengeID: 123456789,
+
+			expectedPath: "/lol/challenges/v1/challenges/123456789/percentiles",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetPercentilesByChallengeID(context.Background(), 1)
+			pc, mockDoer := newTestPlatformClient(http.StatusOK, levelPercentilesJSON)
+			resp, err := pc.GetPercentilesByChallengeID(context.Background(), tt.challengeID)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
+			require.NoError(t, err)
 
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+			assert.Equal(t, expectedLevelPercentiles, resp)
 		})
 	}
 }
 
 func TestGetPlayerInfoByPUUID(t *testing.T) {
-	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
-		expectedResult PlayerInfo
-		wantErr        bool
-		wantRiotErr    bool
-	}{
-		{
-			name:         "riot error",
-			statusCode:   http.StatusNotFound,
-			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
-		},
-		{
-			name:         "invalid json",
-			statusCode:   http.StatusOK,
-			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
-		},
-		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   playerInfoJSON,
-			expectedResult: expectedPlayerInfo,
-			wantErr:        false,
-		},
-	}
+	pc, mockDoer := newTestPlatformClient(http.StatusOK, playerInfoJSON)
+	resp, err := pc.GetPlayerInfoByPUUID(context.Background(), "test-puuid")
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetPlayerInfoByPUUID(context.Background(), "test-puuid")
+	require.NoError(t, err)
 
-			if tt.wantErr {
-				assert.NotNil(t, err)
-
-				if tt.wantRiotErr {
-					var rErr *internal.RiotError
-					assert.ErrorAs(t, err, &rErr)
-					assert.Equal(t, tt.statusCode, rErr.StatusCode)
-				}
-				return
-			}
-
-			require.Nil(t, err)
-			assert.Equal(t, tt.expectedResult, resp)
-		})
-	}
+	assert.Equal(t, "/lol/challenges/v1/player-data/test-puuid", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, expectedPlayerInfo, resp)
 }

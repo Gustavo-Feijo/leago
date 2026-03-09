@@ -31,52 +31,71 @@ var (
 	`
 )
 
-func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
+func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-	return NewPlatformClient(baseClient)
+	return NewPlatformClient(baseClient), mockDoer
 }
 
 func TestGetSummonerByPUUID(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		puuid string
+
+		statusCode   int
+		responseBody string
+
+		expectedPath string
+
 		expectedResult Summoner
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
+			name: "riot error",
+
+			puuid: "nonexistentpuuid",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
+			name: "invalid json",
+
+			puuid: "invalidjsonpuuid",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   summonerJSON,
+			name: "success",
+
+			puuid: "testpuuid",
+
+			statusCode:   http.StatusOK,
+			responseBody: summonerJSON,
+
+			expectedPath: "/tft/summoner/v1/summoners/by-puuid/testpuuid",
+
 			expectedResult: expectedSummoner,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetSummonerByPUUID(context.Background(), "test-puuid")
+			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
+			resp, err := pc.GetSummonerByPUUID(context.Background(), tt.puuid)
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
@@ -87,8 +106,10 @@ func TestGetSummonerByPUUID(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
-			assert.Equal(t, expectedSummoner, resp)
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }

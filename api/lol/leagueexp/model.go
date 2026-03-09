@@ -1,9 +1,7 @@
 package leagueexp
 
 type (
-	LeagueResponse []LeagueEntry
-
-	LeagueEntry struct {
+	Entry struct {
 		LeagueID     string      `json:"leagueId"`
 		SummonerID   string      `json:"summonerId"`
 		PUUID        string      `json:"puuid"`

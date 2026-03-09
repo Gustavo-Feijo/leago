@@ -2,7 +2,6 @@ package spectator
 
 import (
 	"context"
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"testing"
@@ -103,52 +102,71 @@ var (
 	}`
 )
 
-func newTestPlatformClient(statusCode int, responseBody string, httpErr error) *PlatformClient {
-	mockDoer := mock.NewDefaultDoer(statusCode, responseBody, httpErr)
+func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-	return NewPlatformClient(baseClient)
+	return NewPlatformClient(baseClient), mockDoer
 }
 
 func TestGetGameByPUUID(t *testing.T) {
 	tests := []struct {
-		name           string
-		statusCode     int
-		httpErr        error
-		responseBody   string
+		name string
+
+		puuid string
+
+		statusCode   int
+		responseBody string
+
+		expectedPath string
+
 		expectedResult CurrentGameInfo
-		wantErr        bool
-		wantRiotErr    bool
+
+		wantErr     bool
+		wantRiotErr bool
 	}{
 		{
-			name:         "riot error",
+			name: "riot error",
+
+			puuid: "nonexistentpuuid",
+
 			statusCode:   http.StatusNotFound,
 			responseBody: `{"status":{"status_code":404}}`,
-			wantErr:      true,
-			wantRiotErr:  true,
+
+			wantErr:     true,
+			wantRiotErr: true,
 		},
 		{
-			name:         "invalid json",
+			name: "invalid json",
+
+			puuid: "testpuuidbadjson",
+
 			statusCode:   http.StatusOK,
 			responseBody: `{"invalid json,,,,::"shouldbevalid"}`,
-			wantErr:      true,
-			wantRiotErr:  false,
+
+			wantErr:     true,
+			wantRiotErr: false,
 		},
 		{
-			name:           "success",
-			statusCode:     http.StatusOK,
-			responseBody:   currentGameJSON,
+			name: "success",
+
+			puuid: "testpuuid",
+
+			statusCode:   http.StatusOK,
+			responseBody: currentGameJSON,
+
+			expectedPath: "/lol/spectator/v5/active-games/by-summoner/testpuuid",
+
 			expectedResult: expectedCurrentGame,
-			wantErr:        false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc := newTestPlatformClient(tt.statusCode, tt.responseBody, tt.httpErr)
-			resp, err := pc.GetGameByPUUID(context.Background(), "test-puuid")
+			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
+			resp, err := pc.GetGameByPUUID(context.Background(), tt.puuid)
 
 			if tt.wantErr {
-				assert.NotNil(t, err)
+				require.Error(t, err)
 
 				if tt.wantRiotErr {
 					var rErr *internal.RiotError
@@ -159,14 +177,10 @@ func TestGetGameByPUUID(t *testing.T) {
 				return
 			}
 
-			require.Nil(t, err)
-			require.NotNil(t, resp)
+			require.NoError(t, err)
 
-			// Normalize through JSON to avoid pointer comparison issues.
-			expectedJSON, _ := json.Marshal(tt.expectedResult)
-			respJSON, _ := json.Marshal(resp)
-
-			assert.Equal(t, expectedJSON, respJSON)
+			assert.Equal(t, tt.expectedPath, mockDoer.CapturedReq.URL.Path)
+			assert.Equal(t, tt.expectedResult, resp)
 		})
 	}
 }
