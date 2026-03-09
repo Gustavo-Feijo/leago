@@ -1,6 +1,6 @@
 module github.com/Gustavo-Feijo/leago
 
-go 1.26
+go 1.24
 
 require github.com/stretchr/testify v1.11.1
 

@@ -40,7 +40,7 @@ var (
 				ProfileIconID: 1234,
 				Bot:           false,
 				TeamID:        100,
-				PUUID:         new("test-puuid"),
+				PUUID:         func() *string { s := "test-puuid"; return &s }(),
 				Spell1ID:      4,
 				Spell2ID:      14,
 				Perks: Perks{
