@@ -1,5 +1,7 @@
 package match
 
+import "github.com/Gustavo-Feijo/leago/internal"
+
 // Separate file for those models due to their size.
 type (
 	Match struct {
@@ -14,22 +16,22 @@ type (
 	}
 
 	MatchInfo struct {
-		EndOfGameResult    string             `json:"endOfGameResult"`
-		GameCreation       int64              `json:"gameCreation"`
-		GameDuration       int64              `json:"gameDuration"`
-		GameEndTimestamp   int64              `json:"gameEndTimestamp"`
-		GameID             int64              `json:"gameId"`
-		GameMode           string             `json:"gameMode"`
-		GameName           string             `json:"gameName"`
-		GameStartTimestamp int64              `json:"gameStartTimestamp"`
-		GameType           string             `json:"gameType"`
-		GameVersion        string             `json:"gameVersion"`
-		MapID              int                `json:"mapId"`
-		Participants       []MatchParticipant `json:"participants"`
-		PlatformID         string             `json:"platformId"`
-		QueueID            int                `json:"queueId"`
-		Teams              []Team             `json:"teams"`
-		TournamentCode     string             `json:"tournamentCode"`
+		EndOfGameResult    string                   `json:"endOfGameResult"`
+		GameCreation       internal.UnixMillisTime  `json:"gameCreation"`
+		GameDuration       internal.SecondsDuration `json:"gameDuration"`
+		GameEndTimestamp   internal.UnixMillisTime  `json:"gameEndTimestamp"`
+		GameID             int64                    `json:"gameId"`
+		GameMode           string                   `json:"gameMode"`
+		GameName           string                   `json:"gameName"`
+		GameStartTimestamp internal.UnixMillisTime  `json:"gameStartTimestamp"`
+		GameType           string                   `json:"gameType"`
+		GameVersion        string                   `json:"gameVersion"`
+		MapID              int                      `json:"mapId"`
+		Participants       []MatchParticipant       `json:"participants"`
+		PlatformID         string                   `json:"platformId"`
+		QueueID            int                      `json:"queueId"`
+		Teams              []Team                   `json:"teams"`
+		TournamentCode     string                   `json:"tournamentCode"`
 	}
 
 	MatchParticipant struct {

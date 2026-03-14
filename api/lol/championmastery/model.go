@@ -1,21 +1,23 @@
 package championmastery
 
+import "github.com/Gustavo-Feijo/leago/internal"
+
 type (
 	// Mastery entry for a given player with a given champion.
 	Mastery struct {
-		Puuid                        string               `json:"puuid"`
-		ChampionPointsUntilNextLevel int64                `json:"championPointsUntilNextLevel"`
-		ChestGranted                 bool                 `json:"chestGranted"`
-		ChampionID                   int64                `json:"championId"`
-		LastPlayTime                 int64                `json:"lastPlayTime"`
-		ChampionLevel                int                  `json:"championLevel"`
-		ChampionPoints               int                  `json:"championPoints"`
-		ChampionPointsSinceLastLevel int64                `json:"championPointsSinceLastLevel"`
-		MarkRequiredForNextLevel     int                  `json:"markRequiredForNextLevel"`
-		ChampionSeasonMilestone      int                  `json:"championSeasonMilestone"`
-		NextSeasonMilestone          NextSeasonMilestones `json:"nextSeasonMilestone"`
-		TokensEarned                 int                  `json:"tokensEarned"`
-		MilestoneGrades              []string             `json:"milestoneGrades"`
+		Puuid                        string                  `json:"puuid"`
+		ChampionPointsUntilNextLevel int64                   `json:"championPointsUntilNextLevel"`
+		ChestGranted                 bool                    `json:"chestGranted"`
+		ChampionID                   int64                   `json:"championId"`
+		LastPlayTime                 internal.UnixMillisTime `json:"lastPlayTime"`
+		ChampionLevel                int                     `json:"championLevel"`
+		ChampionPoints               int                     `json:"championPoints"`
+		ChampionPointsSinceLastLevel int64                   `json:"championPointsSinceLastLevel"`
+		MarkRequiredForNextLevel     int                     `json:"markRequiredForNextLevel"`
+		ChampionSeasonMilestone      int                     `json:"championSeasonMilestone"`
+		NextSeasonMilestone          NextSeasonMilestones    `json:"nextSeasonMilestone"`
+		TokensEarned                 int                     `json:"tokensEarned"`
+		MilestoneGrades              []string                `json:"milestoneGrades"`
 	}
 
 	NextSeasonMilestones struct {

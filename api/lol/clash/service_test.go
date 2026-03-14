@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
@@ -71,8 +72,8 @@ var (
 		Schedule: []TournamentPhase{
 			{
 				ID:               10,
-				RegistrationTime: 1000,
-				StartTime:        2000,
+				RegistrationTime: internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
+				StartTime:        internal.UnixMillisTime{Time: time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC)},
 				Cancelled:        false,
 			},
 		},
@@ -85,8 +86,8 @@ var (
 		"nameKeySecondary":"secondary",
 		"schedule":[{
 			"id":10,
-			"registrationTime":1000,
-			"startTime":2000,
+			"registrationTime":1767225600000,
+			"startTime":1769904000000,
 			"cancelled":false
 		}]
 	}`

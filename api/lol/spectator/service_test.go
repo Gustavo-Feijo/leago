@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
@@ -18,9 +19,9 @@ var (
 	expectedCurrentGame = CurrentGameInfo{
 		GameID:            123456789,
 		GameType:          "MATCHED_GAME",
-		GameStartTime:     1700000000000,
+		GameStartTime:     internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
 		MapID:             11,
-		GameLength:        600,
+		GameLength:        internal.SecondsDuration{Duration: time.Minute * 10},
 		PlatformID:        "BR1",
 		GameMode:          "CLASSIC",
 		GameQueueConfigID: 420,
@@ -61,7 +62,7 @@ var (
 	currentGameJSON = `{
 		"gameId": 123456789,
 		"gameType": "MATCHED_GAME",
-		"gameStartTime": 1700000000000,
+		"gameStartTime": 1767225600000,
 		"mapId": 11,
 		"gameLength": 600,
 		"platformId": "BR1",

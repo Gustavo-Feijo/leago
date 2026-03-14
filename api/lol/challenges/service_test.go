@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
@@ -21,8 +22,8 @@ var (
 		LocalizedNames: map[string]map[string]string{"en_US": {"name": "Test"}},
 		State:          StateEnabled,
 		Tracking:       TrackingLifetime,
-		StartTimestamp: 1000,
-		EndTimestamp:   2000,
+		StartTimestamp: internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
+		EndTimestamp:   internal.UnixMillisTime{Time: time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)},
 		Leaderboard:    true,
 		Thresholds:     map[Level]float64{LevelGold: 100.0},
 	}
@@ -32,8 +33,8 @@ var (
 		"localizedNames": {"en_US": {"name": "Test"}},
 		"state": "ENABLED",
 		"tracking": "LIFETIME",
-		"startTimestamp": 1000,
-		"endTimestamp": 2000,
+		"startTimestamp": 1767225600000,
+		"endTimestamp": 1798761599000,
 		"leaderboard": true,
 		"thresholds": {"GOLD": 100.0}
 	}`
@@ -67,7 +68,7 @@ var (
 			{
 				Percentiles:    0.9,
 				PlayersInLevel: 100,
-				AchievedTime:   1234567890,
+				AchievedTime:   internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
 				Value:          42.0,
 				ChallengeID:    1,
 				Level:          LevelGold,
@@ -96,7 +97,7 @@ var (
 			{
 				"percentile": 0.9,
 				"playersInLevel": 100,
-				"achievedTime": 1234567890,
+				"achievedTime": 1767225600000,
 				"value": 42.0,
 				"challengeId": 1,
 				"level": "GOLD",

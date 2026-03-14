@@ -1,5 +1,7 @@
 package match
 
+import "github.com/Gustavo-Feijo/leago/internal"
+
 type (
 	Match struct {
 		Metadata MatchMetadata `json:"metadata"`
@@ -13,20 +15,20 @@ type (
 	}
 
 	MatchInfo struct {
-		EndOfGameResult string             `json:"endOfGameResult,omitempty"`
-		GameCreation    int64              `json:"gameCreation"`
-		GameID          int64              `json:"gameId"`
-		GameDatetime    int64              `json:"game_datetime"`
-		GameLength      float64            `json:"game_length"`
-		GameVersion     string             `json:"game_version"`
-		GameVariation   string             `json:"game_variation,omitempty"`
-		MapID           int                `json:"mapId"`
-		Participants    []MatchParticipant `json:"participants"`
-		QueueID         int                `json:"queue_id"`
-		QueueIDLegacy   int                `json:"queueId,omitempty"`
-		TFTGameType     string             `json:"tft_game_"`
-		TFTSetCoreName  string             `json:"tft_set_core_name"`
-		TFTSetNumber    int                `json:"tft_set_number"`
+		EndOfGameResult string                  `json:"endOfGameResult,omitempty"`
+		GameCreation    internal.UnixMillisTime `json:"gameCreation"`
+		GameID          int64                   `json:"gameId"`
+		GameDatetime    internal.UnixMillisTime `json:"game_datetime"`
+		GameLength      float64                 `json:"game_length"`
+		GameVersion     string                  `json:"game_version"`
+		GameVariation   string                  `json:"game_variation,omitempty"`
+		MapID           int                     `json:"mapId"`
+		Participants    []MatchParticipant      `json:"participants"`
+		QueueID         int                     `json:"queue_id"`
+		QueueIDLegacy   int                     `json:"queueId,omitempty"`
+		TFTGameType     string                  `json:"tft_game_"`
+		TFTSetCoreName  string                  `json:"tft_set_core_name"`
+		TFTSetNumber    int                     `json:"tft_set_number"`
 	}
 
 	MatchParticipant struct {

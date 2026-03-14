@@ -23,9 +23,9 @@ var (
 			Participants: []string{"puuid1"},
 		},
 		Info: MatchInfo{
-			GameCreation: 1234567890,
+			GameCreation: internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
 			GameID:       123,
-			GameDatetime: 1234567890,
+			GameDatetime: internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 30, 0, 0, time.UTC)},
 			GameLength:   1800,
 			GameVersion:  "14.1",
 			MapID:        1,
@@ -68,9 +68,9 @@ var (
       ]
    },
    "info":{
-      "gameCreation":1234567890,
+      "gameCreation":1767225600000,
       "gameId":123,
-      "game_datetime":1234567890,
+      "game_datetime":1767227400000,
       "game_length":1800,
       "game_version":"14.1",
       "mapId":1,

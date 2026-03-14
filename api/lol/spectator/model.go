@@ -1,12 +1,14 @@
 package spectator
 
+import "github.com/Gustavo-Feijo/leago/internal"
+
 type (
 	CurrentGameInfo struct {
 		GameID            int64                    `json:"gameId"`
 		GameType          string                   `json:"gameType"`
-		GameStartTime     int64                    `json:"gameStartTime"`
+		GameStartTime     internal.UnixMillisTime  `json:"gameStartTime"`
 		MapID             int64                    `json:"mapId"`
-		GameLength        int64                    `json:"gameLength"`
+		GameLength        internal.SecondsDuration `json:"gameLength"`
 		PlatformID        string                   `json:"platformId"`
 		GameMode          string                   `json:"gameMode"`
 		BannedChampions   []BannedChampion         `json:"bannedChampions"`

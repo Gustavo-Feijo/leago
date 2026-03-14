@@ -1,13 +1,15 @@
 package challenges
 
+import "github.com/Gustavo-Feijo/leago/internal"
+
 // List of Basic challenge configuration info (Includes translations).
 type ConfigInfo struct {
 	ID             int64                        `json:"id"`
 	LocalizedNames map[string]map[string]string `json:"localizedNames"`
 	State          State                        `json:"state"`
 	Tracking       Tracking                     `json:"tracking"`
-	StartTimestamp int64                        `json:"startTimestamp"`
-	EndTimestamp   int64                        `json:"endTimestamp"`
+	StartTimestamp internal.UnixMillisTime      `json:"startTimestamp"`
+	EndTimestamp   internal.UnixMillisTime      `json:"endTimestamp"`
 	Leaderboard    bool                         `json:"leaderboard"`
 	Thresholds     map[Level]float64            `json:"thresholds"`
 }
@@ -35,13 +37,13 @@ type (
 	}
 
 	PlayerChallenges struct {
-		Percentiles    float64 `json:"percentile"`
-		PlayersInLevel int     `json:"playersInLevel"`
-		AchievedTime   int64   `json:"achievedTime"`
-		Value          float64 `json:"value"`
-		ChallengeID    int64   `json:"challengeId"`
-		Level          Level   `json:"level"`
-		Position       int     `json:"position"`
+		Percentiles    float64                 `json:"percentile"`
+		PlayersInLevel int                     `json:"playersInLevel"`
+		AchievedTime   internal.UnixMillisTime `json:"achievedTime"`
+		Value          float64                 `json:"value"`
+		ChallengeID    int64                   `json:"challengeId"`
+		Level          Level                   `json:"level"`
+		Position       int                     `json:"position"`
 	}
 
 	PlayerClientPreferences struct {

@@ -1,5 +1,7 @@
 package clash
 
+import "github.com/Gustavo-Feijo/leago/internal"
+
 // Return a list of registrations of a player to clash tournaments.
 type Player struct {
 	Puuid    string   `json:"puuid"`
@@ -39,10 +41,10 @@ type (
 	}
 
 	TournamentPhase struct {
-		ID               int   `json:"id"`
-		RegistrationTime int64 `json:"registrationTime"`
-		StartTime        int64 `json:"startTime"`
-		Cancelled        bool  `json:"cancelled"`
+		ID               int                     `json:"id"`
+		RegistrationTime internal.UnixMillisTime `json:"registrationTime"`
+		StartTime        internal.UnixMillisTime `json:"startTime"`
+		Cancelled        bool                    `json:"cancelled"`
 	}
 )
 

@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
@@ -21,7 +22,7 @@ var (
 		ChampionPointsUntilNextLevel: 100,
 		ChestGranted:                 true,
 		ChampionID:                   266,
-		LastPlayTime:                 1700000000000,
+		LastPlayTime:                 internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
 		ChampionLevel:                7,
 		ChampionPoints:               123456,
 		ChampionPointsSinceLastLevel: 5000,
@@ -49,7 +50,7 @@ var (
 			"championPointsUntilNextLevel": 100,
 			"chestGranted": true,
 			"championId": 266,
-			"lastPlayTime": 1700000000000,
+			"lastPlayTime": 1767225600000,
 			"championLevel": 7,
 			"championPoints": 123456,
 			"championPointsSinceLastLevel": 5000,

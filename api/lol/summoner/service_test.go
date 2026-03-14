@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
@@ -17,14 +18,14 @@ import (
 var (
 	expectedSummoner = Summoner{
 		ProfileIconID: 15,
-		RevisionDate:  1772728809000,
+		RevisionDate:  internal.UnixMillisTime{Time: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)},
 		Puuid:         "test-puuid",
 		SummonerLevel: 400,
 	}
 
 	summonerJSON = `{
    "profileIconId":15,
-   "revisionDate":1772728809000,
+   "revisionDate":1767225600000,
    "puuid":"test-puuid",
    "summonerLevel":400
 }
