@@ -1,17 +1,17 @@
 package tft
 
 import (
-	"log/slog"
-	"net/http"
 	"testing"
 
+	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewPlatformClient(t *testing.T) {
-	client := NewPlatformClient(http.DefaultClient, slog.Default(), regions.PlatformBR1, "apiKey")
+	bc := internal.NewHTTPClient(string(regions.PlatformBR1), "apiKey")
+	client := NewPlatformClient(bc)
 	require.NotNil(t, client)
 
 	require.NotNil(t, client.League)

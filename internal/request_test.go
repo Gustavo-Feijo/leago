@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/Gustavo-Feijo/leago/internal/mock"
+	nooprl "github.com/Gustavo-Feijo/leago/ratelimit/noop"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,6 +35,7 @@ func (e errorReader) Read(p []byte) (int, error) {
 func newTestClient(doer *mock.Doer) *Client {
 	return &Client{
 		HTTP:        doer,
+		limiter:     nooprl.NewNoopLimiter(),
 		Logger:      slog.Default(),
 		routePrefix: "test",
 		apiKey:      "apiKey",

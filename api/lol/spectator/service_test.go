@@ -2,7 +2,6 @@ package spectator
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"testing"
 	"time"
@@ -105,7 +104,8 @@ var (
 
 func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
-	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
+	baseClient := internal.NewHTTPClient(string(regions.PlatformBR1), "apiKey", internal.WithHTTP(mockDoer))
+
 	return NewPlatformClient(baseClient), mockDoer
 }
 

@@ -1,13 +1,10 @@
 package tft
 
 import (
-	"log/slog"
-
 	"github.com/Gustavo-Feijo/leago/api/tft/league"
 	"github.com/Gustavo-Feijo/leago/api/tft/status"
 	"github.com/Gustavo-Feijo/leago/api/tft/summoner"
 	"github.com/Gustavo-Feijo/leago/internal"
-	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 type PlatformClient struct {
@@ -16,8 +13,7 @@ type PlatformClient struct {
 	Summoner *summoner.PlatformClient
 }
 
-func NewPlatformClient(client internal.Doer, logger *slog.Logger, region regions.Platform, apiKey string) *PlatformClient {
-	baseClient := internal.NewHTTPClient(client, logger, string(region), apiKey)
+func NewPlatformClient(baseClient *internal.Client) *PlatformClient {
 	c := &PlatformClient{
 		League:   league.NewPlatformClient(baseClient),
 		Status:   status.NewPlatformClient(baseClient),

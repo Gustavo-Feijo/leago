@@ -1,17 +1,17 @@
 package tft
 
 import (
-	"log/slog"
-	"net/http"
 	"testing"
 
+	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewRegionClient(t *testing.T) {
-	client := NewRegionClient(http.DefaultClient, slog.Default(), regions.RegionAmericas, "apiKey")
+	bc := internal.NewHTTPClient(string(regions.RegionAmericas), "apiKey")
+	client := NewRegionClient(bc)
 	require.NotNil(t, client)
 
 	require.NotNil(t, client.Match)

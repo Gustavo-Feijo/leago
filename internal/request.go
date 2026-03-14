@@ -34,7 +34,7 @@ func Request[T any](ctx context.Context, client *Client, uri string, opts ...Req
 		return zero, err
 	}
 
-	return do[T](client, req, &ro)
+	return executor[T](ctx, client, req, &ro)
 }
 
 // buildRequest mounts a new http request with all passed options.
@@ -80,6 +80,17 @@ func buildRequest(ctx context.Context, uri string, opts *requestOptions) (*http.
 	}
 
 	return req, nil
+}
+
+// executor is a wrapper to the do function, holds all checks before actually executing the request.
+func executor[T any](ctx context.Context, client *Client, req *http.Request, ro *requestOptions) (T, error) {
+	var zero T
+	rlErr := client.limiter.Acquire(ctx, ro.apiMethod)
+	if rlErr != nil {
+		return zero, rlErr
+	}
+
+	return do[T](client, req, ro)
 }
 
 // do Executes the request itself and handles the status and unmarshal.

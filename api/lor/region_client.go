@@ -1,12 +1,9 @@
 package lor
 
 import (
-	"log/slog"
-
 	"github.com/Gustavo-Feijo/leago/api/lor/matches"
 	"github.com/Gustavo-Feijo/leago/api/lor/ranked"
 	"github.com/Gustavo-Feijo/leago/internal"
-	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 type RegionClient struct {
@@ -14,8 +11,7 @@ type RegionClient struct {
 	Ranked  *ranked.RegionClient
 }
 
-func NewRegionClient(client internal.Doer, logger *slog.Logger, region regions.Region, apiKey string) *RegionClient {
-	baseClient := internal.NewHTTPClient(client, logger, string(region), apiKey)
+func NewRegionClient(baseClient *internal.Client) *RegionClient {
 	c := &RegionClient{
 		Matches: matches.NewRegionClient(baseClient),
 		Ranked:  ranked.NewRegionClient(baseClient),

@@ -2,7 +2,6 @@ package summoner
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"testing"
 	"time"
@@ -34,8 +33,8 @@ var (
 
 func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
-	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.PlatformBR1), "apiKey")
-	return NewPlatformClient(baseClient), mockDoer
+	bc := internal.NewHTTPClient(string(regions.RegionAmericas), "apiKey", internal.WithHTTP(mockDoer))
+	return NewPlatformClient(bc), mockDoer
 }
 
 func TestGetSummonerByPUUID(t *testing.T) {

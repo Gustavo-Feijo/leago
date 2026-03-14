@@ -9,14 +9,17 @@ import (
 	"github.com/Gustavo-Feijo/leago/api/riot"
 	"github.com/Gustavo-Feijo/leago/api/tft"
 	"github.com/Gustavo-Feijo/leago/internal"
+	"github.com/Gustavo-Feijo/leago/ratelimit"
+	nooprl "github.com/Gustavo-Feijo/leago/ratelimit/noop"
 	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 // Base client used by region and platform client.
 type (
 	baseClient struct {
-		client internal.Doer
-		logger *slog.Logger
+		client  internal.Doer
+		limiter ratelimit.RateLimiter
+		logger  *slog.Logger
 	}
 
 	Option func(*baseClient)
@@ -48,10 +51,17 @@ func NewRegionClient(region regions.Region, apiKey string, opts ...Option) *Regi
 		opt(rc.baseClient)
 	}
 
-	rc.Riot = riot.NewRegionClient(rc.client, rc.logger, region, apiKey)
-	rc.Lor = lor.NewRegionClient(rc.client, rc.logger, region, apiKey)
-	rc.Lol = lol.NewRegionClient(rc.client, rc.logger, region, apiKey)
-	rc.Tft = tft.NewRegionClient(rc.client, rc.logger, region, apiKey)
+	baseClient := internal.NewHTTPClient(
+		string(region),
+		apiKey,
+		internal.WithHTTP(rc.client),
+		internal.WithLimiter(rc.limiter),
+		internal.WithLogger(rc.logger),
+	)
+	rc.Riot = riot.NewRegionClient(baseClient)
+	rc.Lor = lor.NewRegionClient(baseClient)
+	rc.Lol = lol.NewRegionClient(baseClient)
+	rc.Tft = tft.NewRegionClient(baseClient)
 
 	return rc
 }
@@ -66,16 +76,24 @@ func NewPlatformClient(platform regions.Platform, apiKey string, opts ...Option)
 		opt(pc.baseClient)
 	}
 
-	pc.Lol = lol.NewPlatformClient(pc.client, pc.logger, platform, apiKey)
-	pc.Tft = tft.NewPlatformClient(pc.client, pc.logger, platform, apiKey)
+	baseClient := internal.NewHTTPClient(
+		string(platform),
+		apiKey,
+		internal.WithHTTP(pc.client),
+		internal.WithLimiter(pc.limiter),
+		internal.WithLogger(pc.logger),
+	)
+	pc.Lol = lol.NewPlatformClient(baseClient)
+	pc.Tft = tft.NewPlatformClient(baseClient)
 
 	return pc
 }
 
 func newBaseClient() *baseClient {
 	return &baseClient{
-		client: http.DefaultClient,
-		logger: slog.New(slog.DiscardHandler),
+		client:  http.DefaultClient,
+		limiter: nooprl.NewNoopLimiter(),
+		logger:  slog.New(slog.DiscardHandler),
 	}
 }
 

@@ -2,7 +2,6 @@ package ranked
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"testing"
 
@@ -38,7 +37,8 @@ var (
 
 func newTestRegionClient(statusCode int, responseBody string) (*RegionClient, *mock.Doer) {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
-	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionAmericas), "apiKey")
+	baseClient := internal.NewHTTPClient(string(regions.RegionAmericas), "apiKey", internal.WithHTTP(mockDoer))
+
 	return NewRegionClient(baseClient), mockDoer
 }
 

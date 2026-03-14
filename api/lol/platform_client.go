@@ -1,8 +1,6 @@
 package lol
 
 import (
-	"log/slog"
-
 	"github.com/Gustavo-Feijo/leago/api/lol/challenges"
 	"github.com/Gustavo-Feijo/leago/api/lol/champion"
 	"github.com/Gustavo-Feijo/leago/api/lol/championmastery"
@@ -13,7 +11,6 @@ import (
 	"github.com/Gustavo-Feijo/leago/api/lol/status"
 	"github.com/Gustavo-Feijo/leago/api/lol/summoner"
 	"github.com/Gustavo-Feijo/leago/internal"
-	"github.com/Gustavo-Feijo/leago/regions"
 )
 
 type PlatformClient struct {
@@ -28,8 +25,7 @@ type PlatformClient struct {
 	Summoner        *summoner.PlatformClient
 }
 
-func NewPlatformClient(client internal.Doer, logger *slog.Logger, region regions.Platform, apiKey string) *PlatformClient {
-	baseClient := internal.NewHTTPClient(client, logger, string(region), apiKey)
+func NewPlatformClient(baseClient *internal.Client) *PlatformClient {
 	c := &PlatformClient{
 		Challenges:      challenges.NewPlatformClient(baseClient),
 		ChampionMastery: championmastery.NewPlatformClient(baseClient),

@@ -2,7 +2,6 @@ package account
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"testing"
 
@@ -60,7 +59,8 @@ var (
 
 func newTestRegionClient(statusCode int, responseBody string) (*RegionClient, *mock.Doer) {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
-	baseClient := internal.NewHTTPClient(mockDoer, slog.Default(), string(regions.RegionEurope), "apiKey")
+	baseClient := internal.NewHTTPClient(string(regions.RegionEurope), "apiKey", internal.WithHTTP(mockDoer))
+
 	return NewRegionClient(baseClient), mockDoer
 }
 
