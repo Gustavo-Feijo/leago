@@ -3,10 +3,13 @@ package internal
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/Gustavo-Feijo/leago/ratelimit"
 )
 
 const apiTokenHeader = "X-Riot-Token" // #nosec Header name, not credential
@@ -84,17 +87,37 @@ func buildRequest(ctx context.Context, uri string, opts *requestOptions) (*http.
 
 // executor is a wrapper to the do function, holds all checks before actually executing the request.
 func executor[T any](ctx context.Context, client *Client, req *http.Request, ro *requestOptions) (T, error) {
-	var zero T
-	rlErr := client.limiter.Acquire(ctx, ro.apiMethod)
+	appKey := ratelimit.AppKey(client.routePrefix)
+	methodKey := ratelimit.MethodKey(client.routePrefix, ro.apiMethod)
+	rlErr := client.limiter.Acquire(ctx, appKey, methodKey)
 	if rlErr != nil {
+		var zero T
 		return zero, rlErr
 	}
 
-	return do[T](client, req, ro)
+	result, headers, err := do[T](client, req, ro)
+
+	if headers != nil {
+		if s, ok := client.limiter.(ratelimit.Syncer); ok {
+			s.Sync(ctx, headers, appKey, methodKey)
+		}
+	}
+
+	// If too many requests notify rate limiter (If appliable).
+	if err != nil {
+		var riotErr *RiotError
+		if errors.As(err, &riotErr) && riotErr.StatusCode == http.StatusTooManyRequests {
+			if n, ok := client.limiter.(ratelimit.Notifier); ok {
+				n.NotifyTooManyRequests(ctx, headers, appKey, methodKey)
+			}
+		}
+	}
+
+	return result, err
 }
 
 // do Executes the request itself and handles the status and unmarshal.
-func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, error) {
+func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, http.Header, error) {
 	var respData T
 
 	logger := client.Logger.With(
@@ -107,19 +130,24 @@ func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, error)
 	resp, err := client.HTTP.Do(req)
 	if err != nil {
 		logger.Error("request failed", "error", err)
-		return respData, err
+
+		if resp != nil {
+			return respData, resp.Header, err
+		}
+
+		return respData, nil, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error("failed to read response body", "error", err)
-		return respData, err
+		return respData, resp.Header, err
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 300 {
 		logger.Warn("non-OK HTTP status", "status", resp.StatusCode)
-		return respData, &RiotError{
+		return respData, resp.Header, &RiotError{
 			StatusCode: resp.StatusCode,
 			Status:     resp.Status,
 			Body:       strings.TrimSpace(string(body)),
@@ -128,8 +156,8 @@ func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, error)
 
 	if err := json.Unmarshal(body, &respData); err != nil {
 		logger.Error("failed to unmarshal response body", "error", err)
-		return respData, err
+		return respData, resp.Header, err
 	}
 
-	return respData, nil
+	return respData, resp.Header, nil
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Gustavo-Feijo/leago"
+	memorylimiter "github.com/Gustavo-Feijo/leago/ratelimit/memory"
 	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/require"
@@ -17,6 +18,7 @@ func TestNewRegionClient(t *testing.T) {
 		"key",
 		leago.WithClient(http.DefaultClient),
 		leago.WithLogger(slog.Default()),
+		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
 	require.NotNil(t, client)
 }
@@ -27,6 +29,7 @@ func TestNewPlatformClient(t *testing.T) {
 		"ApiKey",
 		leago.WithClient(http.DefaultClient),
 		leago.WithLogger(slog.Default()),
+		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
 	require.NotNil(t, client)
 }

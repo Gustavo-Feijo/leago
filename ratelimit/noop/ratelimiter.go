@@ -12,6 +12,6 @@ func NewNoopLimiter() ratelimit.RateLimiter {
 
 type noopLimiter struct{}
 
-func (l *noopLimiter) Acquire(ctx context.Context, key string) error {
+func (l *noopLimiter) Acquire(ctx context.Context, appKey, methodKey string) error {
 	return nil
 }

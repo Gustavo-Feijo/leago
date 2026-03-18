@@ -104,6 +104,13 @@ func WithClient(doer internal.Doer) Option {
 	}
 }
 
+// Override the default noop limiter.
+func WithLimiter(limiter ratelimit.RateLimiter) Option {
+	return func(bc *baseClient) {
+		bc.limiter = limiter
+	}
+}
+
 // Override the default logger with discarded output.
 func WithLogger(logger *slog.Logger) Option {
 	return func(bc *baseClient) {
