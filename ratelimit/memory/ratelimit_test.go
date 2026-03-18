@@ -109,6 +109,22 @@ func TestAcquire(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestAcquireWait(t *testing.T) {
+	ml := NewMemoryLimiter().(*MemoryLimiter)
+
+	limits := ml.getOrCreate("app")
+	limits[0].interval = time.Second
+	limits[0].limit = 1
+	limits[0].count = 1
+
+	ctx := context.Background()
+	err := ml.Acquire(ctx, "app", "method")
+	assert.NoError(t, err)
+
+	err = ml.Acquire(ctx, "app", "method")
+	assert.NoError(t, err)
+}
+
 func TestAcquireContextCancel(t *testing.T) {
 	ml := NewMemoryLimiter().(*MemoryLimiter)
 
