@@ -3,6 +3,7 @@ package league
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/options"
@@ -129,7 +130,7 @@ func (pc *PlatformClient) GetLeagueEntriesByPUUID(
 ) ([]Entry, error) {
 	endpoint := fmt.Sprintf(
 		"/lol/league/v4/entries/by-puuid/%s",
-		puuid,
+		url.PathEscape(puuid),
 	)
 
 	defaultOpts := []internal.RequestOption{

@@ -6,10 +6,8 @@ import (
 	"github.com/Gustavo-Feijo/leago/internal"
 )
 
-type baseOption internal.RequestOption
-
-type UpperLeagueOption baseOption
-type LeagueOption baseOption
+type UpperLeagueOption internal.RequestOption
+type LeagueOption internal.RequestOption
 
 // WithQueue applies queue filter to the request.
 func WithQueueHighElo(queue Queue) UpperLeagueOption {

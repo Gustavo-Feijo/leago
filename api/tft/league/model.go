@@ -48,7 +48,7 @@ type RatedLadderEntry struct {
 	RatedTier                    LadderTier `json:"ratedTier"`
 	RatedRating                  int        `json:"ratedRating"`
 	Wins                         int        `json:"wins"`
-	PreviousUpdateLadderPosition int        `json:"wreviousUpdateLadderPosition"`
+	PreviousUpdateLadderPosition int        `json:"previousUpdateLadderPosition"`
 }
 
 type MiniSeries struct {

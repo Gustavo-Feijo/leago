@@ -16,8 +16,17 @@ func TestNewMemoryLimiter(t *testing.T) {
 	).(*MemoryLimiter)
 
 	assert.NotNil(t, rl)
-	assert.Equal(t, rl.intervalMargin, time.Second)
-	assert.Equal(t, rl.margin, 0.7)
+	assert.Equal(t, time.Second, rl.intervalMargin)
+	assert.Equal(t, 0.7, rl.margin)
+}
+
+func TestNewMemoryLimiterNegativeMargin(t *testing.T) {
+	rl := NewMemoryLimiter(
+		WithLimitSafetyMargin(-1.0),
+	).(*MemoryLimiter)
+
+	assert.NotNil(t, rl)
+	assert.Equal(t, 0.0, rl.margin)
 }
 
 func TestNewMemoryLimiterMarginTooBig(t *testing.T) {
@@ -26,7 +35,7 @@ func TestNewMemoryLimiterMarginTooBig(t *testing.T) {
 	).(*MemoryLimiter)
 
 	assert.NotNil(t, rl)
-	assert.Equal(t, rl.margin, 1.0)
+	assert.Equal(t, 1.0, rl.margin)
 }
 
 func TestLimitSync(t *testing.T) {

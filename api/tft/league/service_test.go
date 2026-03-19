@@ -84,7 +84,7 @@ var (
 		"ratedTier":"BLUE",
 		"ratedRating":200,
 		"wins":20,
-		"wreviousUpdateLadderPosition":1
+		"previousUpdateLadderPosition":1
 	}]`
 
 	expectedRated = []RatedLadderEntry{

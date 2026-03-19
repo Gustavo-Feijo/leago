@@ -145,7 +145,7 @@ func do[T any](client *Client, req *http.Request, ro *requestOptions) (T, http.H
 		return respData, resp.Header, err
 	}
 
-	if resp.StatusCode < 200 || resp.StatusCode > 300 {
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		logger.Warn("non-OK HTTP status", "status", resp.StatusCode)
 		return respData, resp.Header, &RiotError{
 			StatusCode: resp.StatusCode,

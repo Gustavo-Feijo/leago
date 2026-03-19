@@ -105,6 +105,10 @@ func WithLimitSafetyMargin(margin float64) Option {
 			return
 		}
 
+		if margin < 0 {
+			margin = 0
+		}
+
 		ml.margin = margin
 	}
 }
@@ -134,6 +138,7 @@ func (m *MemoryLimiter) Acquire(ctx context.Context, appKey, methodKey string) e
 	appLimits := m.getOrCreate(appKey)
 	methodLimits := m.getOrCreate(methodKey)
 
+	// Suppress linting warning that requires append to be reassigned to the slice.
 	//nolint:gocritic
 	combined := append(appLimits, methodLimits...)
 
@@ -181,6 +186,7 @@ func (m *MemoryLimiter) syncKey(key, raw string) {
 	entries := strings.Split(raw, ",")
 
 	m.mu.Lock()
+	defer m.mu.Unlock()
 	margin := m.margin
 	intervalMargin := m.intervalMargin
 	limits, ok := m.bucket[key]
@@ -191,7 +197,6 @@ func (m *MemoryLimiter) syncKey(key, raw string) {
 		limits = append(limits, &Limit{lastReset: time.Now()})
 	}
 	m.bucket[key] = limits
-	m.mu.Unlock()
 
 	for i, entry := range entries {
 		parts := strings.SplitN(entry, ":", 2)
@@ -204,7 +209,9 @@ func (m *MemoryLimiter) syncKey(key, raw string) {
 			continue
 		}
 
-		requestsWithMargin := math.Floor(margin * float64(requests))
+		// At least 1 req allowed.
+		requestsWithMargin := math.Max(1, math.Floor(margin*float64(requests)))
+
 		limits[i].sync(int(requestsWithMargin), (time.Duration(secs)*time.Second)+intervalMargin)
 	}
 }

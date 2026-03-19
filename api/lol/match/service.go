@@ -90,7 +90,7 @@ func (rc *RegionClient) GetMatchByID(
 	)
 }
 
-// GetMatchByID returns a given match data.
+// GetMatchTimelineByID returns a given match timeline data.
 func (rc *RegionClient) GetMatchTimelineByID(
 	ctx context.Context,
 	matchID string,

@@ -174,7 +174,7 @@ func TestGetMatchByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rc, mockDoer := newTestRegionClient(tt.statusCode, tt.responseBody)
-			resp, err := rc.GetMatchByID(context.Background(), "BR1_123")
+			resp, err := rc.GetMatchByID(context.Background(), tt.matchID)
 
 			if tt.wantErr {
 				require.Error(t, err)
