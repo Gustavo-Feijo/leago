@@ -10,13 +10,13 @@ import (
 )
 
 const (
-	MethodGetMasterLeague      = "League.GetMasterLeague"
-	MethodGetGrandmasterLeague = "League.GetGrandmasterLeague"
-	MethodGetChallengerLeague  = "League.GetChallengerLeague"
+	MethodGetMasterLeague      = "LolLeague.GetMasterLeague"
+	MethodGetGrandmasterLeague = "LolLeague.GetGrandmasterLeague"
+	MethodGetChallengerLeague  = "LolLeague.GetChallengerLeague"
 
-	MethodGetLeagueEntries        = "League.GetLeagueEntries"
-	MethodGetLeagueEntriesByPUUID = "League.GetLeagueEntriesByPUUID"
-	MethodGetLeagueByID           = "League.GetLeagueByID"
+	MethodGetLeagueEntries        = "LolLeague.GetLeagueEntries"
+	MethodGetLeagueEntriesByPUUID = "LolLeague.GetLeagueEntriesByPUUID"
+	MethodGetLeagueByID           = "LolLeague.GetLeagueByID"
 )
 
 // GetMasterLeague returns all entries on the master league.

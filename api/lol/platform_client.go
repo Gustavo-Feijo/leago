@@ -28,8 +28,8 @@ type PlatformClient struct {
 func NewPlatformClient(baseClient *internal.Client) *PlatformClient {
 	c := &PlatformClient{
 		Challenges:      challenges.NewPlatformClient(baseClient),
-		ChampionMastery: championmastery.NewPlatformClient(baseClient),
 		Champion:        champion.NewPlatformClient(baseClient),
+		ChampionMastery: championmastery.NewPlatformClient(baseClient),
 		Clash:           clash.NewPlatformClient(baseClient),
 		League:          league.NewPlatformClient(baseClient),
 		LeagueExp:       leagueexp.NewPlatformClient(baseClient),

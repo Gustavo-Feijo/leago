@@ -113,11 +113,11 @@ var (
 }`
 )
 
-func newTestPlatformClient(statusCode int, responseBody string) (*PlatformClient, *mock.Doer) {
+func newTestRegionClient(statusCode int, responseBody string) (*RegionClient, *mock.Doer) {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
 	baseClient := internal.NewHTTPClient(string(regions.PlatformBR1), "apiKey", internal.WithHTTP(mockDoer))
 
-	return NewPlatformClient(baseClient), mockDoer
+	return NewRegionClient(baseClient), mockDoer
 }
 
 func TestGetStatus(t *testing.T) {
@@ -166,7 +166,7 @@ func TestGetStatus(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pc, mockDoer := newTestPlatformClient(tt.statusCode, tt.responseBody)
+			pc, mockDoer := newTestRegionClient(tt.statusCode, tt.responseBody)
 			resp, err := pc.GetStatus(context.Background())
 
 			if tt.wantErr {

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	MethodGetLeague = "Leagueexp.GetLeague"
+	MethodGetLeague = "LolLeagueexp.GetLeague"
 )
 
 // GetLeague returns all league entries based on the params.

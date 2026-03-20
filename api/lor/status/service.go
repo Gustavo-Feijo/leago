@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	MethodGetStatus = "Status.GetStatus"
+	MethodGetStatus = "LorStatus.GetStatus"
 )
 
 // GetStatus retrieves the Legends of Runeterra status for the platforms.
-func (pc *PlatformClient) GetStatus(
+func (pc *RegionClient) GetStatus(
 	ctx context.Context,
 	opts ...options.PublicOption,
 ) (ServiceStatus, error) {

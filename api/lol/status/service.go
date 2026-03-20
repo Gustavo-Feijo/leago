@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	MethodGetStatus = "Status.GetStatus"
+	MethodGetStatus = "LolStatus.GetStatus"
 )
 
 // GetStatus retrieves the League Of Legends status for the platforms.
