@@ -8,6 +8,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/api/lor"
 	"github.com/Gustavo-Feijo/leago/api/riot"
 	"github.com/Gustavo-Feijo/leago/api/tft"
+	"github.com/Gustavo-Feijo/leago/api/val"
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/ratelimit"
 	nooprl "github.com/Gustavo-Feijo/leago/ratelimit/noop"
@@ -39,6 +40,13 @@ type PlatformClient struct {
 	*baseClient
 	Lol *lol.PlatformClient
 	Tft *tft.PlatformClient
+}
+
+// ValRegionClient provides access to all valorant region related APIs.
+// Separated from RegionClient due to different region separation.
+type ValRegionClient struct {
+	*baseClient
+	Val *val.RegionClient
 }
 
 // NewRegionClient returns a new client with access to the region specific APIs.
@@ -87,6 +95,29 @@ func NewPlatformClient(platform regions.Platform, apiKey string, opts ...Option)
 	pc.Tft = tft.NewPlatformClient(baseClient)
 
 	return pc
+}
+
+// NewValRegionClient returns a new client with access to the valorant region specific APIs.
+func NewValRegionClient(region regions.ValRegion, apiKey string, opts ...Option) *ValRegionClient {
+	rc := &ValRegionClient{
+		baseClient: newBaseClient(),
+	}
+
+	for _, opt := range opts {
+		opt(rc.baseClient)
+	}
+
+	baseClient := internal.NewHTTPClient(
+		string(region),
+		apiKey,
+		internal.WithHTTP(rc.client),
+		internal.WithLimiter(rc.limiter),
+		internal.WithLogger(rc.logger),
+	)
+
+	rc.Val = val.NewRegionClient(baseClient)
+
+	return rc
 }
 
 func newBaseClient() *baseClient {

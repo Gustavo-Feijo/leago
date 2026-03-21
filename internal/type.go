@@ -31,3 +31,16 @@ func (d *SecondsDuration) UnmarshalJSON(b []byte) error {
 	d.Duration = time.Duration(s) * time.Second
 	return nil
 }
+
+type MillisDuration struct {
+	time.Duration
+}
+
+func (d *MillisDuration) UnmarshalJSON(b []byte) error {
+	var s int64
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	d.Duration = time.Duration(s) * time.Millisecond
+	return nil
+}

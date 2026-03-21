@@ -82,3 +82,40 @@ func TestSecondsDurationUnmarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestMillisDurationUnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		name        string
+		input       string
+		expected    time.Duration
+		expectError bool
+	}{
+		{
+			name:     "valid duration",
+			input:    `1000`,
+			expected: time.Duration(time.Second),
+		},
+		{
+			name:        "invalid duration",
+			input:       `"not-a-number"`,
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var result MillisDuration
+
+			err := json.Unmarshal([]byte(tt.input), &result)
+
+			if tt.expectError {
+				require.Error(t, err)
+				return
+			}
+
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.expected.Abs(), result.Abs())
+		})
+	}
+}

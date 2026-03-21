@@ -33,3 +33,14 @@ func TestNewPlatformClient(t *testing.T) {
 	)
 	require.NotNil(t, client)
 }
+
+func TestNewValRegionClient(t *testing.T) {
+	client := leago.NewValRegionClient(
+		regions.ValRegionBR,
+		"ApiKey",
+		leago.WithClient(http.DefaultClient),
+		leago.WithLogger(slog.Default()),
+		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
+	)
+	require.NotNil(t, client)
+}
