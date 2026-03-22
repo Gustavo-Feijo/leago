@@ -44,3 +44,23 @@ func (d *MillisDuration) UnmarshalJSON(b []byte) error {
 	d.Duration = time.Duration(s) * time.Millisecond
 	return nil
 }
+
+// Custom format used on the tournament lobby events.
+type LobbyTime struct {
+	time.Time
+}
+
+func (lt *LobbyTime) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+
+	t, err := time.Parse("Mon Jan 2 15:04:05 MST 2006", s)
+	if err != nil {
+		return err
+	}
+
+	lt.Time = t
+	return nil
+}

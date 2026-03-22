@@ -119,3 +119,45 @@ func TestMillisDurationUnmarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestLobbyTimeUnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		name        string
+		input       string
+		expected    LobbyTime
+		expectError bool
+	}{
+		{
+			name:     "valid time",
+			input:    `"Sun Mar 22 17:00:00 UTC 2026"`,
+			expected: LobbyTime{Time: time.Date(2026, 03, 22, 17, 0, 0, 0, time.UTC)},
+		},
+		{
+			name:        "invalid time",
+			input:       `"not-a-number"`,
+			expectError: true,
+		},
+		{
+			name:        "invalid json",
+			input:       `123`,
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var result LobbyTime
+
+			err := json.Unmarshal([]byte(tt.input), &result)
+
+			if tt.expectError {
+				require.Error(t, err)
+				return
+			}
+
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
