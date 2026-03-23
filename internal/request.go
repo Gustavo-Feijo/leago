@@ -14,7 +14,8 @@ import (
 
 const apiTokenHeader = "X-Riot-Token" // #nosec Header name, not credential
 
-// AuthRequest makes a authenticated request with the provided client and returns the decode value to the expected generic type.
+// AuthRequest calls Request with a automatically attached client API Key.
+// It's the standard entrypoint for most of the Riot API Calls.
 func AuthRequest[T any](ctx context.Context, client *Client, uri string, opts ...RequestOption) (T, error) {
 	return Request[T](
 		ctx,
@@ -24,7 +25,9 @@ func AuthRequest[T any](ctx context.Context, client *Client, uri string, opts ..
 	)
 }
 
-// Request is the basic request implementation with multiple options.
+// Request builds and executes an HTTP request.
+// Is able to handler rate limiting, limits syncing from headers and notifying limiter on 429 (Depends on limiter implementation).
+// Use AuthRequest instead if a API key is required.
 func Request[T any](ctx context.Context, client *Client, uri string, opts ...RequestOption) (T, error) {
 	var ro requestOptions
 	for _, o := range opts {

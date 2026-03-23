@@ -1,7 +1,8 @@
 package league
 
 type (
-	// Challenger, Grandmaster and Master have a different DTO.
+	// RawLeague is the DTO returned for Challenger, Grandmaster and Master leagues.
+	// Differ by having a separation between league metadata and actual elo entries.
 	RawLeague struct {
 		LeagueID string        `json:"leagueId"`
 		Entries  []RawEloEntry `json:"entries"`
@@ -24,6 +25,7 @@ type (
 	}
 )
 
+// Entry is the full ranked entry returned for a given player.
 type Entry struct {
 	LeagueID     string      `json:"leagueId"`
 	SummonerID   string      `json:"summonerId"`
@@ -41,6 +43,7 @@ type Entry struct {
 	MiniSeries   *MiniSeries `json:"miniSeries,omitempty"`
 }
 
+// MiniSeries holds promotion series progress.
 type MiniSeries struct {
 	Losses   int    `json:"losses"`
 	Progress string `json:"progress"`

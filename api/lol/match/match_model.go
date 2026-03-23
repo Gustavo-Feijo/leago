@@ -4,17 +4,21 @@ import "github.com/Gustavo-Feijo/leago/internal"
 
 // Separate file for those models due to their size.
 type (
+	// Match is the top level response for the Match v5 API.
 	Match struct {
 		Metadata MatchMetadata `json:"metadata"`
 		Info     MatchInfo     `json:"info"`
 	}
 
+	// MatchMetadata holds multiple identifier for the matches.
 	MatchMetadata struct {
-		DataVersion  string   `json:"dataVersion"`
-		MatchID      string   `json:"matchId"`
+		DataVersion string `json:"dataVersion"`
+		MatchID     string `json:"matchId"`
+		// Participants holds the players PUUIDs in the order they appear on MatchInfo.Participants.
 		Participants []string `json:"participants"`
 	}
 
+	// Full game data, containing data regarding timings, teams and participants.
 	MatchInfo struct {
 		EndOfGameResult    string                   `json:"endOfGameResult"`
 		GameCreation       internal.UnixMillisTime  `json:"gameCreation"`
@@ -34,6 +38,7 @@ type (
 		TournamentCode     string                   `json:"tournamentCode"`
 	}
 
+	// MatchParticipant holds all per-player statistics for a single match.
 	MatchParticipant struct {
 		AllInPings                     int        `json:"allInPings"`
 		AssistMePings                  int        `json:"assistMePings"`
@@ -338,6 +343,7 @@ type (
 		PlayerScore11 int `json:"playerScore11"`
 	}
 
+	// Perks holds the rune page selections made by a participant.
 	Perks struct {
 		StatPerks PerkStats   `json:"statPerks"`
 		Styles    []PerkStyle `json:"styles"`
@@ -374,6 +380,7 @@ type (
 		PickTurn   int `json:"pickTurn"`
 	}
 
+	// Objectives groups the first-blood and kill counts for each major objective type (Baron, Dragon, Tower, etc.).
 	Objectives struct {
 		Baron      Objective `json:"baron"`
 		Champion   Objective `json:"champion"`

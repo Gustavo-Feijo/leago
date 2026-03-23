@@ -5,6 +5,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/internal"
 )
 
+// RegionClient groups the TFT APIs that are scoped to a routing region (e.g. EUROPE, AMERICAS).
 type RegionClient struct {
 	Match *match.RegionClient
 }

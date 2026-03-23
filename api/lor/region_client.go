@@ -7,6 +7,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/internal"
 )
 
+// RegionClient groups the Legends Of Runeterra APIs that are scoped to a routing region (e.g. EUROPE, AMERICAS).
 type RegionClient struct {
 	Matches *matches.RegionClient
 	Ranked  *ranked.RegionClient

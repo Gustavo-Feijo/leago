@@ -3,6 +3,7 @@ package spectator
 import "github.com/Gustavo-Feijo/leago/internal"
 
 type (
+	// CurrentGameInfo is the live game data returned by the Spectator v5 API.
 	CurrentGameInfo struct {
 		GameID            int64                    `json:"gameId"`
 		GameType          string                   `json:"gameType"`
@@ -28,11 +29,13 @@ type (
 	}
 
 	CurrentGameParticipant struct {
-		ChampionID               int64                     `json:"championId"`
-		Perks                    Perks                     `json:"perks"`
-		ProfileIconID            int64                     `json:"profileIconId"`
-		Bot                      bool                      `json:"bot"`
-		TeamID                   int64                     `json:"teamId"`
+		ChampionID    int64 `json:"championId"`
+		Perks         Perks `json:"perks"`
+		ProfileIconID int64 `json:"profileIconId"`
+		Bot           bool  `json:"bot"`
+		TeamID        int64 `json:"teamId"`
+
+		// PUUID may be absent if player is a Bot.
 		PUUID                    *string                   `json:"puuid"`
 		Spell1ID                 int64                     `json:"spell1Id"`
 		Spell2ID                 int64                     `json:"spell2Id"`

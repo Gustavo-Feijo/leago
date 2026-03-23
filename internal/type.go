@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// UnixMillisTime wraps time.Time and deserialises Riot API timestamps which come in Unix milliseconds (int64).
 type UnixMillisTime struct {
 	time.Time
 }
@@ -19,6 +20,7 @@ func (t *UnixMillisTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// SecondsDuration wraps time.Duration and deserialises Riot API duration when come as plain integer number of seconds.
 type SecondsDuration struct {
 	time.Duration
 }
@@ -32,6 +34,7 @@ func (d *SecondsDuration) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MillisDuration wraps time.Duration and deserialises Riot API duration when come as plain integer number of milliseconds.
 type MillisDuration struct {
 	time.Duration
 }
@@ -45,7 +48,7 @@ func (d *MillisDuration) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// Custom format used on the tournament lobby events.
+// LobbyTime wraps time.Time and deserialises a custom format used in tournament lobby events.
 type LobbyTime struct {
 	time.Time
 }

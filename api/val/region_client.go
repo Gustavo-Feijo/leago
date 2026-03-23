@@ -8,6 +8,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/internal"
 )
 
+// RegionClient groups the Valorant APIs that are scoped to a routing region (e.g. br, eu).
 type RegionClient struct {
 	Content *content.RegionClient
 	Match   *match.RegionClient

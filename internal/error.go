@@ -2,6 +2,8 @@ package internal
 
 import "fmt"
 
+// RiotError is returned for any non-2xx response from the Riot API.
+// Callers can unwrap it with errors.As to inspect the status code.
 type RiotError struct {
 	StatusCode int
 	Status     string

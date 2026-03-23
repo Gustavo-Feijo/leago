@@ -13,6 +13,7 @@ import (
 	"github.com/Gustavo-Feijo/leago/internal"
 )
 
+// PlatformClient groups all League of Legends APIs that are scoped to a  platform (e.g. EUW1, NA1).
 type PlatformClient struct {
 	Challenges      *challenges.PlatformClient
 	Champion        *champion.PlatformClient

@@ -1,6 +1,7 @@
 package leagueexp
 
 type (
+	// Elo entry for the leagues.
 	Entry struct {
 		LeagueID     string      `json:"leagueId"`
 		SummonerID   string      `json:"summonerId"`

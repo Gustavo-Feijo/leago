@@ -2,30 +2,34 @@ package tournament
 
 import "github.com/Gustavo-Feijo/leago/internal"
 
-type (
-	TournamentCodePayload struct {
-		SpectatorType SpectatorType `json:"spectatorType"`
+// TournamentCodePayload is the request body for CreateCodes.
+type TournamentCodePayload struct {
+	SpectatorType SpectatorType `json:"spectatorType"`
 
-		// Valid values from 1-5.
-		TeamSize            int      `json:"teamSize"`
-		PickType            PickType `json:"pickType"`
-		AllowedParticipants []string `json:"allowedParticipants,omitempty"`
-		MapType             MapType  `json:"mapType"`
-		Metadata            string   `json:"metadata"`
-		EnoughPlayers       bool     `json:"enoughPlayers"`
-	}
-)
+	// Valid values from 1-5.
+	TeamSize int      `json:"teamSize"`
+	PickType PickType `json:"pickType"`
+
+	// AllowedParticipants restricts which PUUIDs may join.
+	AllowedParticipants []string `json:"allowedParticipants,omitempty"`
+
+	MapType MapType `json:"mapType"`
+
+	// Optional metadata.
+	Metadata      string `json:"metadata"`
+	EnoughPlayers bool   `json:"enoughPlayers"`
+}
+
+// PutTournamentCodePayload is the request body for UpdateCodes.
+type PutTournamentCodePayload struct {
+	SpectatorType       SpectatorType `json:"spectatorType"`
+	PickType            PickType      `json:"pickType"`
+	AllowedParticipants []string      `json:"allowedParticipants,omitempty"`
+	MapType             MapType       `json:"mapType"`
+}
 
 type (
-	PutTournamentCodePayload struct {
-		SpectatorType       SpectatorType `json:"spectatorType"`
-		PickType            PickType      `json:"pickType"`
-		AllowedParticipants []string      `json:"allowedParticipants,omitempty"`
-		MapType             MapType       `json:"mapType"`
-	}
-)
-
-type (
+	// TournamentCode is the full DTO returned by GetCodes.
 	TournamentCode struct {
 		Code         string           `json:"code"`
 		LobbyName    string           `json:"lobbyName"`
@@ -43,6 +47,7 @@ type (
 )
 
 type (
+	// TournamentGame holds the result of a completed tournament game, returned by GetGamesByCode.
 	TournamentGame struct {
 		StartTime   int64            `json:"startTime"`
 		WinningTeam []TournamentTeam `json:"winningTeam"`
@@ -69,6 +74,7 @@ type (
 		EventList []LobbyEvent `json:"eventList"`
 	}
 
+	// LobbyEvent represents a single event in a tournament lobby's history.
 	LobbyEvent struct {
 		Timestamp internal.LobbyTime `json:"timestamp"`
 		// If possible move to typed value, the possible values are not listed on the docs.
@@ -77,19 +83,17 @@ type (
 	}
 )
 
-type (
-	ProviderPayload struct {
-		Region TournamentRegion `json:"region"`
-		URL    string           `json:"url"`
-	}
-)
+// ProviderPayload is the request body for CreateProvider.
+type ProviderPayload struct {
+	Region TournamentRegion `json:"region"`
+	URL    string           `json:"url"`
+}
 
-type (
-	TournamentPayload struct {
-		Name     string `json:"name"`
-		Provider int    `json:"provider"`
-	}
-)
+// TournamentPayload is the request body for CreateTournament.
+type TournamentPayload struct {
+	Name     string `json:"name"`
+	Provider int    `json:"provider"`
+}
 
 type PickType string
 type SpectatorType string
