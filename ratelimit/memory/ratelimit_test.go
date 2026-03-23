@@ -191,7 +191,7 @@ func TestSyncExpandLimits(t *testing.T) {
 func TestSyncKeyKeyDoesNotExist(t *testing.T) {
 	ml := NewMemoryLimiter().(*MemoryLimiter)
 
-	ml.syncKey("missing", "10:1")
+	assert.NotPanics(t, func() { ml.syncKey("missing", "10:1") })
 }
 
 func TestSyncInvalidHeader(t *testing.T) {
@@ -202,7 +202,7 @@ func TestSyncInvalidHeader(t *testing.T) {
 
 	ml.getOrCreate("app")
 
-	ml.Sync(context.Background(), headers, "app", "method")
+	assert.NotPanics(t, func() { ml.Sync(context.Background(), headers, "app", "method") })
 }
 
 func TestSyncInvalidEntries(t *testing.T) {
@@ -213,9 +213,7 @@ func TestSyncInvalidEntries(t *testing.T) {
 
 	ml.getOrCreate("app")
 
-	ml.Sync(context.Background(), headers, "app", "method")
-
-	assert.True(t, true)
+	assert.NotPanics(t, func() { ml.Sync(context.Background(), headers, "app", "method") })
 }
 
 func TestNotifyTooManyRequests(t *testing.T) {
@@ -239,9 +237,7 @@ func TestNotifyTooManyRequestsNoHeader(t *testing.T) {
 
 	headers := http.Header{}
 
-	ml.NotifyTooManyRequests(context.Background(), headers, "app", "method")
-
-	assert.True(t, true)
+	assert.NotPanics(t, func() { ml.NotifyTooManyRequests(context.Background(), headers, "app", "method") })
 }
 
 func TestNotifyTooManyRequestsMissingKey(t *testing.T) {
@@ -250,7 +246,7 @@ func TestNotifyTooManyRequestsMissingKey(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("Retry-After", "1")
 
-	ml.NotifyTooManyRequests(context.Background(), headers, "app", "method")
+	assert.NotPanics(t, func() { ml.NotifyTooManyRequests(context.Background(), headers, "app", "method") })
 }
 
 func TestParseRetryAfter(t *testing.T) {

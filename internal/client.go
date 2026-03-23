@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 
@@ -39,7 +40,7 @@ func NewHTTPClient(route, apiKey string, opts ...ClientOption) *Client {
 	c := &Client{
 		HTTP:        http.DefaultClient,
 		limiter:     nooprl.NewNoopLimiter(),
-		Logger:      slog.New(slog.DiscardHandler),
+		Logger:      slog.New(slog.NewTextHandler(io.Discard, nil)),
 		routePrefix: route,
 		apiKey:      apiKey,
 	}

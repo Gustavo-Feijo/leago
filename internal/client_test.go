@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"io"
 	"log/slog"
 	"testing"
 
@@ -21,7 +22,7 @@ func TestNewHTTPClient(t *testing.T) {
 func TestNewHTTPClientWithParams(t *testing.T) {
 	mockDoer := &mock.Doer{}
 	limiter := memorylimiter.NewMemoryLimiter()
-	logger := slog.New(slog.DiscardHandler)
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	client := NewHTTPClient(string(regions.PlatformBR1), "apiKey",
 		WithHTTP(mockDoer),
 		WithLimiter(limiter),

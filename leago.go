@@ -1,6 +1,7 @@
 package leago
 
 import (
+	"io"
 	"log/slog"
 	"net/http"
 
@@ -124,7 +125,7 @@ func newBaseClient() *baseClient {
 	return &baseClient{
 		client:  http.DefaultClient,
 		limiter: nooprl.NewNoopLimiter(),
-		logger:  slog.New(slog.DiscardHandler),
+		logger:  slog.New(slog.NewTextHandler(io.Discard, nil)),
 	}
 }
 
