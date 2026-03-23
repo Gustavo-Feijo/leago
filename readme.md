@@ -81,6 +81,7 @@ A simple in-memory implementation with all three interfaces can be found in ```r
 
 Example usage:
 ```go
+func main() {
 	apiKey := "RGAPI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 	ratelimiter := memorylimiter.NewMemoryLimiter(
 		// Simple methods to reduce the limits usage/delay limit resets. 
@@ -99,6 +100,7 @@ Example usage:
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 ```
 
 ## Decisions
