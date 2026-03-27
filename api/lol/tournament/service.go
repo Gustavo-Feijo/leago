@@ -119,7 +119,7 @@ func (rc *RegionClient) GetGamesByCode(
 	)
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithAPIMethod(MethodUpdateCodes),
+		internal.WithAPIMethod(MethodGetGamesByCode),
 	}
 
 	uri := rc.client.GetURL(endpoint)
@@ -191,9 +191,9 @@ func (rc *RegionClient) CreateTournament(
 	stub bool,
 	opts ...options.PublicOption,
 ) (int, error) {
-	endpoint := "/lol/tournament/v5/providers"
+	endpoint := "/lol/tournament/v5/tournaments"
 	if stub {
-		endpoint = "/lol/tournament-stub/v5/providers"
+		endpoint = "/lol/tournament-stub/v5/tournaments"
 	}
 
 	defaultOpts := []internal.RequestOption{

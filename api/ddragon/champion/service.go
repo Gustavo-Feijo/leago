@@ -43,7 +43,7 @@ func (rc *RegionClient) GetChampionByID(
 	endpoint := fmt.Sprintf("/cdn/%s/data/%s/champion/%s.json", rc.version, rc.language, url.PathEscape(championID))
 
 	defaultOpts := []internal.RequestOption{
-		internal.WithAPIMethod(MethodGetChampions),
+		internal.WithAPIMethod(MethodGetChampionByID),
 	}
 
 	uri := rc.client.GetDDragonURL(endpoint)

@@ -310,6 +310,6 @@ func TestCreateTournament(t *testing.T) {
 
 	require.NoError(t, err)
 
-	assert.Equal(t, "/lol/tournament-stub/v5/providers", mockDoer.CapturedReq.URL.Path)
+	assert.Equal(t, "/lol/tournament-stub/v5/tournaments", mockDoer.CapturedReq.URL.Path)
 	assert.Equal(t, expectedTournament, resp)
 }
