@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Gustavo-Feijo/leago"
+	"github.com/Gustavo-Feijo/leago/api/ddragon/realms"
 	memorylimiter "github.com/Gustavo-Feijo/leago/ratelimit/memory"
 	"github.com/Gustavo-Feijo/leago/regions"
 
@@ -38,6 +39,20 @@ func TestNewValRegionClient(t *testing.T) {
 	client := leago.NewValRegionClient(
 		regions.ValRegionBR,
 		"ApiKey",
+		leago.WithClient(http.DefaultClient),
+		leago.WithLogger(slog.Default()),
+		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
+	)
+	require.NotNil(t, client)
+}
+
+func TestNewDDragonClient(t *testing.T) {
+	client := leago.NewDDragonClient(
+		realms.RealmBR,
+		[]leago.DDragonOption{
+			leago.WithLocale("en_US"),
+			leago.WithVersion("16.6.1"),
+		},
 		leago.WithClient(http.DefaultClient),
 		leago.WithLogger(slog.Default()),
 		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),

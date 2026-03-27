@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	apiURLFormat = "https://%s.api.riotgames.com%s"
+	apiURLFormat     = "https://%s.api.riotgames.com%s"
+	ddragonURLFormat = "https://ddragon.leagueoflegends.com%s"
 )
 
 // Client is the shared HTTP transport used by all leago API clients.
@@ -61,4 +62,9 @@ func NewHTTPClient(route, apiKey string, opts ...ClientOption) *Client {
 // GetURL constructs the full Riot API URL for the given endpoint path.
 func (c *Client) GetURL(endpoint string) string {
 	return fmt.Sprintf(apiURLFormat, c.routePrefix, endpoint)
+}
+
+// GetDDragonURL constructs the full DDragon URL for the given endpoint path.
+func (c *Client) GetDDragonURL(endpoint string) string {
+	return fmt.Sprintf(ddragonURLFormat, endpoint)
 }

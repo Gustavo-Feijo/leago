@@ -38,3 +38,9 @@ func TestGetURL(t *testing.T) {
 	url := client.GetURL("/testapi")
 	assert.Contains(t, url, string(regions.PlatformBR1))
 }
+
+func TestGetDDragonURL(t *testing.T) {
+	client := NewHTTPClient(string("realm"), "apiKey")
+	url := client.GetDDragonURL("/testapi")
+	assert.Equal(t, "https://ddragon.leagueoflegends.com/testapi", url)
+}

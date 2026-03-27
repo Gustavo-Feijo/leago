@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/Gustavo-Feijo/leago/api/ddragon"
+	"github.com/Gustavo-Feijo/leago/api/ddragon/realms"
 	"github.com/Gustavo-Feijo/leago/api/lol"
 	"github.com/Gustavo-Feijo/leago/api/lor"
 	"github.com/Gustavo-Feijo/leago/api/riot"
@@ -147,5 +149,59 @@ func WithLimiter(limiter ratelimit.RateLimiter) Option {
 func WithLogger(logger *slog.Logger) Option {
 	return func(bc *baseClient) {
 		bc.logger = logger
+	}
+}
+
+// DDragonClient provides access to data and assets.
+type (
+	DDragonClient struct {
+		*baseClient
+		DDragon *ddragon.RegionClient
+
+		// Optional DDragon version and locale if set manually.
+		version string
+		locale  string
+	}
+	DDragonOption func(*DDragonClient)
+)
+
+// NewDDragonClient returns a new client with access to the valorant region specific APIs.
+func NewDDragonClient(realm realms.Realm, ddOpts []DDragonOption, opts ...Option) *DDragonClient {
+	rc := &DDragonClient{
+		baseClient: newBaseClient(),
+	}
+
+	for _, opt := range opts {
+		opt(rc.baseClient)
+	}
+
+	for _, opt := range ddOpts {
+		opt(rc)
+	}
+
+	baseClient := internal.NewHTTPClient(
+		string(realm),
+		"nokeyneeded",
+		internal.WithHTTP(rc.client),
+		internal.WithLimiter(rc.limiter),
+		internal.WithLogger(rc.logger),
+	)
+
+	rc.DDragon = ddragon.NewRegionClient(baseClient, realm, rc.version, rc.locale)
+
+	return rc
+}
+
+// WithVersion sets the DDragon client default version (Instead of getting the latest one for the realm).
+func WithVersion(version string) DDragonOption {
+	return func(dc *DDragonClient) {
+		dc.version = version
+	}
+}
+
+// WithLocale sets the DDragon client default locale (Instead of getting the default one for the realm).
+func WithLocale(locale string) DDragonOption {
+	return func(dc *DDragonClient) {
+		dc.locale = string(locale)
 	}
 }
