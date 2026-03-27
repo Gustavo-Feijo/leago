@@ -7,6 +7,7 @@ import (
 
 	"github.com/Gustavo-Feijo/leago"
 	"github.com/Gustavo-Feijo/leago/api/ddragon/realms"
+	"github.com/Gustavo-Feijo/leago/internal/mock"
 	memorylimiter "github.com/Gustavo-Feijo/leago/ratelimit/memory"
 	"github.com/Gustavo-Feijo/leago/regions"
 
@@ -47,7 +48,7 @@ func TestNewValRegionClient(t *testing.T) {
 }
 
 func TestNewDDragonClient(t *testing.T) {
-	client := leago.NewDDragonClient(
+	client, _ := leago.NewDDragonClient(
 		realms.RealmBR,
 		[]leago.DDragonOption{
 			leago.WithLocale("en_US"),
@@ -58,4 +59,20 @@ func TestNewDDragonClient(t *testing.T) {
 		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
 	require.NotNil(t, client)
+}
+
+func TestNewDDragonClientError(t *testing.T) {
+	mockDoer := mock.NewDefaultDoer(http.StatusBadRequest, "badrequest")
+	client, err := leago.NewDDragonClient(
+		realms.RealmBR,
+		[]leago.DDragonOption{
+			// No locale and version, must trigger the request.
+		},
+		leago.WithClient(mockDoer),
+		leago.WithLogger(slog.Default()),
+		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
+	)
+
+	require.Nil(t, client)
+	require.Error(t, err)
 }

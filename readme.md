@@ -32,7 +32,7 @@ func main() {
 		panic(err)
 	}
 
-	// Create a plataform client (For game specific endpoint).
+	// Create a platform client (For game specific endpoint).
 	pClient := leago.NewPlatformClient(
 		regions.PlatformNA1,
 		apiKey,

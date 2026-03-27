@@ -12,7 +12,9 @@ import (
 
 func main() {
 	// go run examples/ddragon/main.go
-	client := leago.NewDDragonClient(
+
+	// DDragon client initialization can use IO if version and locale are not provided and need to be fetched.
+	client, err := leago.NewDDragonClient(
 		realms.RealmNA,
 
 		// Options to override the default realm values.
@@ -22,6 +24,9 @@ func main() {
 			leago.WithLocale("pt_BR"),
 		},
 	)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	champion, err := client.DDragon.Champion.GetChampionByID(context.Background(), "Aatrox")
 	if err != nil {

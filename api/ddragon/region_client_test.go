@@ -46,7 +46,7 @@ func newTestRegionClient(statusCode int, responseBody string) (*internal.Client,
 func TestNewRegionClient(t *testing.T) {
 	bc, _ := newTestRegionClient(http.StatusOK, realmJSON)
 
-	client := NewRegionClient(bc, realms.RealmBR, "16.6.1", "pt_BR")
+	client, _ := NewRegionClient(bc, realms.RealmBR, "16.6.1", "pt_BR")
 
 	require.NotNil(t, client)
 
@@ -62,10 +62,10 @@ func TestNewRegionClient(t *testing.T) {
 	require.NotNil(t, client.Version)
 }
 
-func TestNewRegionClient_WithBootstrap(t *testing.T) {
+func TestNewRegionClientWithBootstrap(t *testing.T) {
 	bc, mockDoer := newTestRegionClient(http.StatusOK, realmJSON)
 
-	client := NewRegionClient(bc, realms.RealmKR, "", "")
+	client, _ := NewRegionClient(bc, realms.RealmKR, "", "")
 
 	require.NotNil(t, client)
 
@@ -80,21 +80,19 @@ func TestNewRegionClient_WithBootstrap(t *testing.T) {
 	require.NotNil(t, client.Summoner)
 }
 
-func TestNewRegionClient_BootstrapErrorFallback(t *testing.T) {
+func TestNewRegionClientBootstrapErrorFallback(t *testing.T) {
 	bc, _ := newTestRegionClient(http.StatusNotFound, `{"status":{"status_code":404}}`)
 
-	client := NewRegionClient(bc, realms.RealmKR, "", "")
+	client, err := NewRegionClient(bc, realms.RealmKR, "", "")
 
-	require.NotNil(t, client)
-
-	assert.Equal(t, "16.6.1", client.version)
-	assert.Equal(t, "en_US", client.locale)
+	require.Error(t, err)
+	require.Nil(t, client)
 }
 
-func TestNewRegionClient_ManualOverride(t *testing.T) {
+func TestNewRegionClientManualOverride(t *testing.T) {
 	bc, _ := newTestRegionClient(http.StatusOK, realmJSON)
 
-	client := NewRegionClient(bc, realms.RealmKR, "1.2.3", "fr_FR")
+	client, _ := NewRegionClient(bc, realms.RealmKR, "1.2.3", "fr_FR")
 
 	require.NotNil(t, client)
 
@@ -111,13 +109,14 @@ func TestBootstrap(t *testing.T) {
 		Realms:  realms.NewRegionClient(bc),
 	}
 
-	client.Bootstrap(realms.RealmKR)
+	err := client.bootstrap(realms.RealmKR)
+	require.NoError(t, err)
 
 	assert.Equal(t, "99.1.1", client.version)
 	assert.Equal(t, "ko_KR", client.locale)
 }
 
-func TestBootstrap_Error(t *testing.T) {
+func TestBootstrapError(t *testing.T) {
 	bc, _ := newTestRegionClient(http.StatusNotFound, `{"status":{"status_code":404}}`)
 
 	client := &RegionClient{
@@ -126,7 +125,8 @@ func TestBootstrap_Error(t *testing.T) {
 		Realms:  realms.NewRegionClient(bc),
 	}
 
-	client.Bootstrap(realms.RealmKR)
+	err := client.bootstrap(realms.RealmKR)
+	require.Error(t, err)
 
 	assert.Equal(t, "old", client.version)
 	assert.Equal(t, "old", client.locale)

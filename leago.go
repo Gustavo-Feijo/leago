@@ -165,8 +165,9 @@ type (
 	DDragonOption func(*DDragonClient)
 )
 
-// NewDDragonClient returns a new client with access to the valorant region specific APIs.
-func NewDDragonClient(realm realms.Realm, ddOpts []DDragonOption, opts ...Option) *DDragonClient {
+// NewDDragonClient returns a new client with access to the DDragon assets.
+// Also returns a error due initialization using IO if version and locale are not provided and need to be fetched.
+func NewDDragonClient(realm realms.Realm, ddOpts []DDragonOption, opts ...Option) (*DDragonClient, error) {
 	rc := &DDragonClient{
 		baseClient: newBaseClient(),
 	}
@@ -187,9 +188,14 @@ func NewDDragonClient(realm realms.Realm, ddOpts []DDragonOption, opts ...Option
 		internal.WithLogger(rc.logger),
 	)
 
-	rc.DDragon = ddragon.NewRegionClient(baseClient, realm, rc.version, rc.locale)
+	ddClient, err := ddragon.NewRegionClient(baseClient, realm, rc.version, rc.locale)
+	if err != nil {
+		return nil, err
+	}
 
-	return rc
+	rc.DDragon = ddClient
+
+	return rc, nil
 }
 
 // WithVersion sets the DDragon client default version (Instead of getting the latest one for the realm).
