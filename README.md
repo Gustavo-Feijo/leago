@@ -58,6 +58,25 @@ func main() {
 	}
 
 	fmt.Println(content)
+
+	ddClient, err := leago.NewDDragonClient(
+		realms.RealmNA,
+		[]leago.DDragonOption{
+			// Optional overrides
+			leago.WithVersion("16.6.1"),
+			leago.WithLocale("en_US"),
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	champion, err := ddClient.DDragon.Champion.GetChampionByID(context.Background(), "Aatrox")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(champion)
 }
 ```
 
