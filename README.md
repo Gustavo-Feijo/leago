@@ -104,8 +104,14 @@ func main() {
 ```
 
 ## Decisions
-It works with multiple client instances, with each client being coupled to its region or platform.
 
-The goal is to add reliable completion and separation between the clients, that way a Platform Client (NA1 for example) can't be used with Region specific endpoints.
+#### Type-safe Client
+The API is split into different clients, so it has ```RegionClient```, ```PlatformClient```, ```ValRegionClient``` and ```DDragonClient``` instead of a single unified client.
 
-This project comes from some challenges I faced while developing hobby projects using the Riot API, the goal here is to provide a working client for its access.
+This approach is intentional, the Riot API has separations for routing, like regions (Americas, Asia, Europe and Sea), platforms (NA1, BR1, KR1, etc), Valorant regions (Latam, NA) and DDragon Realms (PBE, PH). Using this approach each client only can access the endpoints for its routing, making it consistent for the type system.
+
+#### Rate Limiting
+The Ratelimiter is a interface, not concrete implementation.
+Three interfaces are provided for implementation (```RateLimiter```, ```Sync``` and ```Notifier```), you can implement for whatever your use case needs.
+A single-process app can use the included in-memory limiter. 
+A distributed system can plug in a Redis based implementation without touching the client. 
