@@ -23,6 +23,10 @@ func TestNewRegionClient(t *testing.T) {
 		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
 	require.NotNil(t, client)
+	require.NotNil(t, client.Lol)
+	require.NotNil(t, client.Lor)
+	require.NotNil(t, client.Riot)
+	require.NotNil(t, client.Tft)
 }
 
 func TestNewPlatformClient(t *testing.T) {
@@ -34,6 +38,8 @@ func TestNewPlatformClient(t *testing.T) {
 		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
 	require.NotNil(t, client)
+	require.NotNil(t, client.Lol)
+	require.NotNil(t, client.Tft)
 }
 
 func TestNewValRegionClient(t *testing.T) {
@@ -45,19 +51,22 @@ func TestNewValRegionClient(t *testing.T) {
 		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
 	require.NotNil(t, client)
+	require.NotNil(t, client.Val)
 }
 
 func TestNewDDragonClient(t *testing.T) {
-	client, _ := leago.NewDDragonClient(
+	mockDoer := mock.NewDefaultDoer(http.StatusOK, "okay")
+	client, err := leago.NewDDragonClient(
 		realms.RealmBR,
 		[]leago.DDragonOption{
 			leago.WithLocale("en_US"),
 			leago.WithVersion("16.6.1"),
 		},
-		leago.WithClient(http.DefaultClient),
+		leago.WithClient(mockDoer),
 		leago.WithLogger(slog.Default()),
 		leago.WithLimiter(memorylimiter.NewMemoryLimiter()),
 	)
+	require.NoError(t, err)
 	require.NotNil(t, client)
 }
 

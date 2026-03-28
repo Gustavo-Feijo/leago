@@ -15,4 +15,5 @@ func TestNewRegionClient(t *testing.T) {
 	require.NotNil(t, client)
 
 	require.NotNil(t, client.Match)
+	require.NotNil(t, client.Tournament)
 }

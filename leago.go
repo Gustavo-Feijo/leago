@@ -18,6 +18,10 @@ import (
 	"github.com/Gustavo-Feijo/leago/regions"
 )
 
+const (
+	DDragonNoAuthRequired = "noauthrequired"
+)
+
 // Base client used by region and platform client.
 type (
 	baseClient struct {
@@ -182,7 +186,7 @@ func NewDDragonClient(realm realms.Realm, ddOpts []DDragonOption, opts ...Option
 
 	baseClient := internal.NewHTTPClient(
 		string(realm),
-		"nokeyneeded",
+		DDragonNoAuthRequired,
 		internal.WithHTTP(rc.client),
 		internal.WithLimiter(rc.limiter),
 		internal.WithLogger(rc.logger),

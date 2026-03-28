@@ -7,7 +7,6 @@ import (
 	"github.com/Gustavo-Feijo/leago/api/ddragon/realms"
 	"github.com/Gustavo-Feijo/leago/internal"
 	"github.com/Gustavo-Feijo/leago/internal/mock"
-	"github.com/Gustavo-Feijo/leago/regions"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -39,7 +38,7 @@ var (
 
 func newTestRegionClient(statusCode int, responseBody string) (*internal.Client, *mock.Doer) {
 	mockDoer := mock.NewDefaultDoer(statusCode, responseBody)
-	client := internal.NewHTTPClient(string(regions.RegionAmericas), "nokey", internal.WithHTTP(mockDoer))
+	client := internal.NewHTTPClient(string(realms.RealmNA), "nokey", internal.WithHTTP(mockDoer))
 	return client, mockDoer
 }
 
@@ -76,8 +75,11 @@ func TestNewRegionClientWithBootstrap(t *testing.T) {
 
 	require.NotNil(t, client.Champion)
 	require.NotNil(t, client.Item)
+	require.NotNil(t, client.Language)
 	require.NotNil(t, client.ProfileIcon)
+	require.NotNil(t, client.Realms)
 	require.NotNil(t, client.Summoner)
+	require.NotNil(t, client.Version)
 }
 
 func TestNewRegionClientBootstrapErrorFallback(t *testing.T) {
